@@ -145,7 +145,7 @@ function AddressRow({ user, address, index, navigationState, archived, onArchive
     <Stack component="article" direction="row" spacing={1.5} sx={{ alignItems: 'flex-start', px: { xs: 2, sm: 2.5 }, py: 2, borderBottom: archived ? 0 : '1px solid', borderColor: 'divider', opacity: archived ? 0.8 : 1 }}>
       <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', flex: '0 0 auto', width: 28, height: 28, border: '1px solid', borderColor: 'divider', borderRadius: 1, color: 'text.secondary', fontSize: 11, fontWeight: 700 }}>{index}</Box>
       <Box sx={{ minWidth: 0, flex: 1 }}>
-        <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
           <Typography variant="body2" sx={{ fontWeight: 700 }}>{address.label}</Typography>
           {address.primary && <Chip size="small" label="Primary" sx={(theme) => ({ height: 22, bgcolor: 'rgba(var(--mui-palette-success-mainChannel) / 0.14)', color: 'success.dark', fontSize: 10, fontWeight: 700, ...theme.applyStyles('dark', { bgcolor: 'rgba(var(--mui-palette-success-mainChannel) / 0.18)', color: 'success.light' }) })} />}
           {archived && <StatusChip deleted />}
