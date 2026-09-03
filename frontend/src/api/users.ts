@@ -13,7 +13,7 @@ function serializeListParams(params: UserListParams): string {
   const search = new URLSearchParams();
   if (params.query) search.set('query', params.query);
   search.set('status', params.status ?? 'active');
-  search.set('sort', params.sort ?? 'lastName,asc');
+  search.set('sort', params.sort ?? 'firstName,asc');
   search.set('page', String(params.page ?? 0));
   search.set('size', String(params.size ?? 20));
   return search.toString();

@@ -57,7 +57,7 @@ List parameters:
 | --- | --- | --- |
 | `query` | empty | case-insensitive search across email, first name, last name |
 | `status` | `active` | `active`, `deleted`, or `all` |
-| `sort` | `lastName,asc` | only documented sortable fields/directions are accepted |
+| `sort` | `firstName,asc` | only documented sortable fields/directions are accepted |
 | `page` | `0` | zero-based |
 | `size` | `20` | maximum `100` |
 

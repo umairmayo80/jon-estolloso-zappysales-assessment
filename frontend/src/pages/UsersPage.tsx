@@ -15,7 +15,8 @@ import { PageError, PageLoading } from '../components/AsyncState';
 import { StatusChip } from '../components/StatusChip';
 
 const DEFAULT_PAGE_SIZE = 20;
-const SORTABLE_FIELDS = new Set(['lastName', 'firstName', 'email', 'updatedAt']);
+const DEFAULT_SORT = 'firstName,asc';
+const SORTABLE_FIELDS = new Set(['firstName', 'email', 'updatedAt']);
 
 function parsePage(value: string | null): number {
   const parsed = Number.parseInt(value ?? '', 10);
@@ -32,8 +33,8 @@ function parseStatus(value: string | null): ProfileStatus {
 }
 
 function parseSort(value: string | null): string {
-  const [field, direction] = (value ?? 'lastName,asc').split(',');
-  return SORTABLE_FIELDS.has(field) && (direction === 'asc' || direction === 'desc') ? `${field},${direction}` : 'lastName,asc';
+  const [field, direction] = (value ?? DEFAULT_SORT).split(',');
+  return SORTABLE_FIELDS.has(field) && (direction === 'asc' || direction === 'desc') ? `${field},${direction}` : DEFAULT_SORT;
 }
 
 function formatUpdatedAt(value: string): string {
@@ -98,9 +99,9 @@ export function UsersPage() {
   const sortModel: GridSortModel = [{ field: sortField, sort: sortDirection }];
   const paginationModel: GridPaginationModel = { page, pageSize: size };
   const columns = useMemo<GridColDef<UserSummary>[]>(() => [
-    { field: 'person', headerName: 'Person', flex: 1.1, minWidth: 220, sortable: false, renderCell: ({ row }) => <PersonCell user={row} /> },
+    { field: 'firstName', headerName: 'Person', flex: 1.1, minWidth: 220, renderCell: ({ row }) => <PersonCell user={row} /> },
     { field: 'email', headerName: 'Email', flex: 1.15, minWidth: 230 },
-    { field: 'addressCount', headerName: 'Addresses', width: 112, align: 'center', headerAlign: 'center', renderCell: ({ value }) => <Typography variant="body2">{value} {value === 1 ? 'address' : 'addresses'}</Typography> },
+    { field: 'addressCount', headerName: 'Addresses', width: 112, align: 'center', headerAlign: 'center', sortable: false, renderCell: ({ value }) => <Typography variant="body2">{value} {value === 1 ? 'address' : 'addresses'}</Typography> },
     { field: 'deleted', headerName: 'Status', width: 110, sortable: false, renderCell: ({ value }) => <StatusChip deleted={Boolean(value)} /> },
     { field: 'updatedAt', headerName: 'Last updated', width: 150, renderCell: ({ value }) => <Typography variant="body2" color="text.secondary">{formatUpdatedAt(String(value))}</Typography> },
     { field: 'action', headerName: '', width: 88, sortable: false, filterable: false, renderCell: ({ row }) => <Button size="small" onClick={(event) => { event.stopPropagation(); openUser(row.id); }}>Open</Button> },
@@ -124,10 +125,13 @@ export function UsersPage() {
             paginationModel={paginationModel}
             onPaginationModelChange={(model) => updateParams({ page: String(model.page), size: String(model.pageSize) })}
             sortModel={sortModel}
+            sortingOrder={['asc', 'desc']}
             onSortModelChange={(model) => {
               const item = model[0];
               if (item?.field && item.sort && SORTABLE_FIELDS.has(item.field)) updateParams({ sort: `${item.field},${item.sort}`, page: '0' });
             }}
+            loading={usersQuery.isFetching}
+            slotProps={{ loadingOverlay: { variant: 'skeleton' } }}
             pageSizeOptions={[20, 50, 100]}
             disableColumnMenu
             disableRowSelectionOnClick

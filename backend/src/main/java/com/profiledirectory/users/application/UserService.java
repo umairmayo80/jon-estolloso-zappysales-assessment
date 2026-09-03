@@ -156,7 +156,7 @@ public class UserService {
     }
 
     private Sort resolveSort(String requested) {
-        String value = requested == null || requested.isBlank() ? "lastName,asc" : requested.trim();
+        String value = requested == null || requested.isBlank() ? "firstName,asc" : requested.trim();
         String[] parts = value.split(",", -1);
         if (parts.length != 2) {
             throw new InvalidRequestException("sort must use field,direction");

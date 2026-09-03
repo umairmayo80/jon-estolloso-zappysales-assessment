@@ -18,6 +18,55 @@ test('administrator can sign in and open the directory', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'People directory' })).toBeVisible();
 });
 
+test('desktop directory sorting updates the server request and loads only table rows', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The grid is replaced with person cards on mobile.');
+
+  const requestedSorts: string[] = [];
+  let releaseEmailRequest: (() => void) | undefined;
+  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Local Administrator', role: 'ADMIN' } }));
+  await page.route('**/api/v1/users**', async (route) => {
+    const requestUrl = new URL(route.request().url());
+    const sort = requestUrl.searchParams.get('sort') ?? '';
+    requestedSorts.push(sort);
+    if (sort === 'email,asc') await new Promise<void>((resolve) => { releaseEmailRequest = resolve; });
+
+    await route.fulfill({ json: {
+      content: [{ id: 'maya-1', firstName: 'Maya', lastName: 'Chen', email: 'maya.chen@example.test', addressCount: 2, deleted: false, version: 0, updatedAt: '2026-09-03T13:15:00Z' }],
+      page: Number(requestUrl.searchParams.get('page') ?? 0),
+      size: 20,
+      totalElements: 1,
+      totalPages: 1,
+      sort,
+    } });
+  });
+
+  await page.goto('/users?status=active&page=2');
+  const personHeader = page.getByRole('columnheader', { name: 'Person' });
+  const emailHeader = page.getByRole('columnheader', { name: 'Email' });
+  const updatedHeader = page.getByRole('columnheader', { name: 'Last updated' });
+  await expect(page.getByRole('grid')).toBeVisible();
+  await expect(personHeader).toHaveAttribute('aria-sort', 'ascending');
+  await expect(page.getByRole('columnheader', { name: 'Addresses' })).not.toHaveClass('MuiDataGrid-columnHeader--sortable');
+
+  await personHeader.click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('sort')).toBe('firstName,desc');
+  await expect.poll(() => requestedSorts).toContain('firstName,desc');
+
+  await emailHeader.click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('sort')).toBe('email,asc');
+  await expect.poll(() => releaseEmailRequest).toBeTruthy();
+  const loadingRows = page.locator('.directory-grid .MuiDataGrid-skeletonLoadingOverlay');
+  await expect(loadingRows).toBeVisible();
+  const [headerBox, loadingRowsBox] = await Promise.all([emailHeader.boundingBox(), loadingRows.boundingBox()]);
+  expect(loadingRowsBox?.y).toBeGreaterThanOrEqual((headerBox?.y ?? 0) + (headerBox?.height ?? 0) - 1);
+  releaseEmailRequest?.();
+  await expect(loadingRows).toBeHidden();
+
+  await updatedHeader.click();
+  await expect.poll(() => new URL(page.url()).searchParams.get('sort')).toBe('updatedAt,asc');
+  await expect.poll(() => requestedSorts).toContain('updatedAt,asc');
+});
+
 test('desktop person cells keep both text lines within their grid cell', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'The grid is replaced with person cards on mobile.');
 
@@ -28,11 +77,11 @@ test('desktop person cells keep both text lines within their grid cell', async (
     size: 20,
     totalElements: 1,
     totalPages: 1,
-    sort: 'lastName,asc',
+    sort: 'firstName,asc',
   } }));
 
   await page.goto('/users?status=all&page=0');
-  const personCell = page.locator('.directory-grid .MuiDataGrid-row').first().locator('[data-field="person"]');
+  const personCell = page.locator('.directory-grid .MuiDataGrid-row').first().locator('[data-field="firstName"]');
   await expect(personCell).toBeVisible();
 
   const [cell, name, detail] = await Promise.all([

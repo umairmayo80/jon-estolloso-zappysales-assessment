@@ -8,7 +8,7 @@ async function mockDirectory(page: Page) {
     size: 20,
     totalElements: 1,
     totalPages: 1,
-    sort: 'lastName,asc',
+    sort: 'firstName,asc',
   } }));
   await page.route('**/api/v1/users/maya-1', (route) => route.fulfill({ json: {
     id: 'maya-1',
