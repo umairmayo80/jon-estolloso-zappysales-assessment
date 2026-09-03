@@ -18,6 +18,34 @@ test('administrator can sign in and open the directory', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'People directory' })).toBeVisible();
 });
 
+test('desktop person cells keep both text lines within their grid cell', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The grid is replaced with person cards on mobile.');
+
+  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Local Administrator', role: 'ADMIN' } }));
+  await page.route('**/api/v1/users**', (route) => route.fulfill({ json: {
+    content: [{ id: 'maya-1', firstName: 'Maya', lastName: 'Chen', email: 'maya.chen@example.test', addressCount: 2, deleted: false, version: 0, updatedAt: '2026-09-03T13:15:00Z' }],
+    page: 0,
+    size: 20,
+    totalElements: 1,
+    totalPages: 1,
+    sort: 'lastName,asc',
+  } }));
+
+  await page.goto('/users?status=all&page=0');
+  const personCell = page.locator('.directory-grid .MuiDataGrid-row').first().locator('[data-field="person"]');
+  await expect(personCell).toBeVisible();
+
+  const [cell, name, detail] = await Promise.all([
+    personCell.boundingBox(),
+    personCell.getByText('Maya Chen', { exact: true }).boundingBox(),
+    personCell.getByText('Profile record', { exact: true }).boundingBox(),
+  ]);
+  if (!cell || !name || !detail) throw new Error('Expected the complete person cell to be visible.');
+
+  expect(name.y).toBeGreaterThanOrEqual(cell.y - 0.5);
+  expect(detail.y + detail.height).toBeLessThanOrEqual(cell.y + cell.height + 0.5);
+});
+
 test.describe('live profile lifecycle', () => {
   test.setTimeout(90_000);
 

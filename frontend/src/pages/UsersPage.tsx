@@ -48,7 +48,7 @@ function PersonCell({ user }: { user: UserSummary }) {
   return (
     <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', minWidth: 0 }}>
       <InitialAvatar firstName={user.firstName} lastName={user.lastName} size={32} />
-      <Box sx={{ minWidth: 0 }}><Typography noWrap variant="body2" sx={{ fontWeight: 700 }}>{user.firstName} {user.lastName}</Typography><Typography noWrap variant="caption" color="text.secondary">Profile record</Typography></Box>
+      <Box sx={{ minWidth: 0 }}><Typography noWrap variant="body2" sx={{ fontWeight: 700 }}>{user.firstName} {user.lastName}</Typography><Typography component="div" noWrap variant="caption" color="text.secondary">Profile record</Typography></Box>
     </Stack>
   );
 }
