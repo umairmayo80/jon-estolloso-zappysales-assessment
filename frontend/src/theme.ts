@@ -67,7 +67,13 @@ export const appTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: { minHeight: 44, backgroundColor: '#FFFFFF', transition: 'border-color 180ms ease, box-shadow 180ms ease' },
+        root: {
+          minHeight: 44,
+          backgroundColor: '#FFFFFF',
+          transition: 'border-color 180ms ease, box-shadow 180ms ease',
+          '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.16)' },
+          '&.Mui-error.Mui-focused': { boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.16)' },
+        },
         notchedOutline: { borderColor: '#CBD5E1' },
       },
     },
