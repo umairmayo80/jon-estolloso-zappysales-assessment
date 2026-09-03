@@ -8,10 +8,27 @@ An administrator should be able to scan a people directory, open a record, and s
 
 ## Visual direction
 
-- Use the light Directory Desk workspace: `#F8FAFC` canvas, white surfaces, `#0F172A` ink, `#2563EB` primary action, `#059669` success, `#DC2626` destructive, and `#E4ECFC` borders.
+- Support both Directory Desk schemes: light uses a `#F8FAFC` canvas, white
+  surfaces, `#0F172A` ink, `#2563EB` primary action, and `#E4ECFC` borders;
+  deep-slate dark uses a `#0F172A` canvas, `#172033` surfaces, `#F8FAFC` ink,
+  `#60A5FA` primary/focus treatment, and `#334155` borders.
 - Use Inter throughout. Use 600-700 weights for headings and 400-500 for body/labels.
 - Favor clean 1px borders, 8px/12px radii, and shallow elevation only for temporary overlays. Do not use gradients, glass effects, decorative illustrations, or marketing hero sections.
 - A thin cobalt vertical spine distinguishes the selected navigation item and selected directory row. Color never supplies the only state cue.
+
+## Color mode and accessibility
+
+- MUI color schemes are selected through its `data` selector, starting from
+  the system preference. Components must use semantic palette tokens so both
+  schemes receive the appropriate surface, foreground, and border colors.
+- Normal text must retain at least 4.5:1 contrast against the canvas and
+  raised surfaces. In dark mode, use `#F8FAFC` primary or `#CBD5E1` secondary
+  text on `#0F172A` / `#172033` surfaces.
+- Focus and non-text controls require at least 3:1 contrast against adjacent
+  surfaces. Use a visible 2px `#60A5FA` indicator in dark mode; primary
+  dark-mode controls use `#0F172A` label text on `#60A5FA`.
+- Success, warning, and destructive states use scheme-appropriate colors with
+  an accessible on-color text label, and never rely on color alone.
 
 ## Layout and navigation
 

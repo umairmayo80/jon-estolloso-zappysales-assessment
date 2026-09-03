@@ -9,8 +9,8 @@ a { color: inherit; }
   top: -80px;
   border-radius: 8px;
   padding: 10px 14px;
-  color: #fff;
-  background: #1d4ed8;
+  color: var(--mui-palette-primary-contrastText);
+  background: var(--mui-palette-primary-dark);
   font-weight: 700;
   text-decoration: none;
 }
@@ -18,25 +18,25 @@ a { color: inherit; }
 .skip-link:focus { top: 16px; }
 
 .Mui-focusVisible, :focus-visible:not(.MuiInputBase-input) {
-  outline: 2px solid #2563eb !important;
+  outline: 2px solid var(--mui-palette-primary-main) !important;
   outline-offset: 2px;
 }
 
 .directory-grid .MuiDataGrid-columnHeaders {
-  border-bottom-color: #e4ecfc;
-  color: #475569;
-  background: #fbfdff;
+  border-bottom-color: var(--mui-palette-divider);
+  color: var(--mui-palette-text-secondary);
+  background: var(--mui-palette-background-paper);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.directory-grid .MuiDataGrid-cell { border-bottom-color: #edf2f8; }
+.directory-grid .MuiDataGrid-cell { border-bottom-color: var(--mui-palette-divider); }
 .directory-grid .MuiDataGrid-row { cursor: pointer; }
-.directory-grid .MuiDataGrid-row:hover { background-color: #f8fbff; }
-.directory-grid .MuiDataGrid-row.is-selected-row { background: #f3f7ff; box-shadow: inset 3px 0 #2563eb; }
-.directory-grid .MuiDataGrid-row.is-selected-row:hover { background: #eff6ff; }
+.directory-grid .MuiDataGrid-row:hover { background-color: rgb(var(--mui-palette-primary-mainChannel) / 0.04); }
+.directory-grid .MuiDataGrid-row.is-selected-row { background: rgb(var(--mui-palette-primary-mainChannel) / 0.06); box-shadow: inset 3px 0 var(--mui-palette-primary-main); }
+.directory-grid .MuiDataGrid-row.is-selected-row:hover { background: rgb(var(--mui-palette-primary-mainChannel) / 0.09); }
 .directory-grid .MuiDataGrid-cell:focus, .directory-grid .MuiDataGrid-cell:focus-within { outline: none; }
 
 @media (max-width: 899px) {

@@ -137,7 +137,7 @@ export function AddressEditorPage() {
               <Grid size={{ xs: 12, sm: 6 }}><TextField id={fieldId<AddressInput>('postalCode')} label="Postal code" fullWidth autoComplete="postal-code" error={Boolean(errors.postalCode)} helperText={errors.postalCode?.message ?? 'Optional'} {...register('postalCode')} /></Grid>
               <Grid size={{ xs: 12, sm: 6 }}><TextField id={fieldId<AddressInput>('countryCode')} label="Country code" fullWidth autoComplete="country" slotProps={{ htmlInput: { maxLength: 2, style: { textTransform: 'uppercase' } } }} error={Boolean(errors.countryCode)} helperText={errors.countryCode?.message ?? 'Use the ISO 3166-1 alpha-2 code, for example US.'} {...register('countryCode')} /></Grid>
             </Grid>
-            <Box sx={{ p: 1.75, border: '1px solid', borderColor: 'divider', borderRadius: 1, bgcolor: '#FBFDFF' }}>
+            <Box sx={{ p: 1.75, border: '1px solid', borderColor: 'divider', borderRadius: 1, bgcolor: 'background.default' }}>
               <FormControlLabel control={<Checkbox {...register('primary')} checked={isPrimary} />} label="Make this the primary address" />
               <Box sx={{ ml: 4.5, mt: -.25, color: 'text.secondary', fontSize: 12 }}>A person can have one active primary address. Selecting this updates the current primary address.</Box>
             </Box>

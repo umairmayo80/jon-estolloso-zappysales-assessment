@@ -1,6 +1,9 @@
 import { createTheme } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
+  interface CssThemeVariables {
+    enabled: true;
+  }
   interface Palette {
     canvas: string;
   }
@@ -10,18 +13,36 @@ declare module '@mui/material/styles' {
 }
 
 export const appTheme = createTheme({
-  cssVariables: true,
-  palette: {
-    mode: 'light',
-    primary: { main: '#2563EB', dark: '#1D4ED8', light: '#DBEAFE', contrastText: '#FFFFFF' },
-    secondary: { main: '#3B82F6' },
-    success: { main: '#047857', dark: '#065F46', light: '#D1FAE5', contrastText: '#FFFFFF' },
-    error: { main: '#DC2626', dark: '#B91C1C', light: '#FEE2E2', contrastText: '#FFFFFF' },
-    warning: { main: '#B45309', dark: '#92400E', light: '#FEF3C7', contrastText: '#FFFFFF' },
-    background: { default: '#F8FAFC', paper: '#FFFFFF' },
-    text: { primary: '#0F172A', secondary: '#475569' },
-    divider: '#E4ECFC',
-    canvas: '#F8FAFC',
+  cssVariables: { colorSchemeSelector: 'data' },
+  colorSchemes: {
+    light: {
+      palette: {
+        mode: 'light',
+        primary: { main: '#2563EB', dark: '#1D4ED8', light: '#DBEAFE', contrastText: '#FFFFFF' },
+        secondary: { main: '#3B82F6' },
+        success: { main: '#047857', dark: '#065F46', light: '#D1FAE5', contrastText: '#FFFFFF' },
+        error: { main: '#DC2626', dark: '#B91C1C', light: '#FEE2E2', contrastText: '#FFFFFF' },
+        warning: { main: '#B45309', dark: '#92400E', light: '#FEF3C7', contrastText: '#FFFFFF' },
+        background: { default: '#F8FAFC', paper: '#FFFFFF' },
+        text: { primary: '#0F172A', secondary: '#475569' },
+        divider: '#E4ECFC',
+        canvas: '#F8FAFC',
+      },
+    },
+    dark: {
+      palette: {
+        mode: 'dark',
+        primary: { main: '#60A5FA', dark: '#3B82F6', light: '#BFDBFE', contrastText: '#0F172A' },
+        secondary: { main: '#93C5FD', dark: '#60A5FA', light: '#DBEAFE', contrastText: '#0F172A' },
+        success: { main: '#34D399', dark: '#10B981', light: '#A7F3D0', contrastText: '#052E16' },
+        error: { main: '#F87171', dark: '#EF4444', light: '#FECACA', contrastText: '#450A0A' },
+        warning: { main: '#FBBF24', dark: '#F59E0B', light: '#FDE68A', contrastText: '#451A03' },
+        background: { default: '#0F172A', paper: '#172033' },
+        text: { primary: '#F8FAFC', secondary: '#CBD5E1' },
+        divider: '#334155',
+        canvas: '#0F172A',
+      },
+    },
   },
   typography: {
     fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -39,12 +60,11 @@ export const appTheme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        ':root': { colorScheme: 'light' },
         '*': { boxSizing: 'border-box' },
-        html: { minHeight: '100%', backgroundColor: '#F8FAFC' },
-        body: { minHeight: '100%', margin: 0, backgroundColor: '#F8FAFC' },
+        html: { minHeight: '100%', backgroundColor: 'var(--mui-palette-background-default)' },
+        body: { minHeight: '100%', margin: 0, backgroundColor: 'var(--mui-palette-background-default)' },
         '#root': { minHeight: '100vh' },
-        '::selection': { backgroundColor: '#BFDBFE', color: '#0F172A' },
+        '::selection': { backgroundColor: 'rgba(var(--mui-palette-primary-mainChannel) / 0.25)', color: 'var(--mui-palette-text-primary)' },
         '@media (prefers-reduced-motion: reduce)': {
           '*, *::before, *::after': {
             animationDuration: '0.01ms !important',
@@ -69,19 +89,19 @@ export const appTheme = createTheme({
       styleOverrides: {
         root: {
           minHeight: 44,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--mui-palette-background-paper)',
           transition: 'border-color 180ms ease, box-shadow 180ms ease',
-          '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.16)' },
-          '&.Mui-error.Mui-focused': { boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.16)' },
+          '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(var(--mui-palette-primary-mainChannel) / 0.16)' },
+          '&.Mui-error.Mui-focused': { boxShadow: '0 0 0 3px rgba(var(--mui-palette-error-mainChannel) / 0.16)' },
         },
-        notchedOutline: { borderColor: '#CBD5E1' },
+        notchedOutline: { borderColor: 'var(--mui-palette-divider)' },
       },
     },
     MuiInputLabel: { styleOverrides: { root: { fontSize: '0.8125rem', fontWeight: 600 } } },
     MuiPaper: { styleOverrides: { root: { backgroundImage: 'none' } } },
-    MuiCard: { styleOverrides: { root: { border: '1px solid #E4ECFC', boxShadow: 'none' } } },
-    MuiDrawer: { styleOverrides: { paper: { boxShadow: '-12px 0 30px rgba(15, 23, 42, 0.10)' } } },
-    MuiDialog: { styleOverrides: { paper: { boxShadow: '0 16px 35px rgba(15, 23, 42, 0.14)' } } },
+    MuiCard: { styleOverrides: { root: { border: '1px solid var(--mui-palette-divider)', boxShadow: 'none' } } },
+    MuiDrawer: { styleOverrides: { paper: { boxShadow: 'var(--mui-shadows-12)' } } },
+    MuiDialog: { styleOverrides: { paper: { boxShadow: 'var(--mui-shadows-16)' } } },
     MuiTooltip: { styleOverrides: { tooltip: { fontSize: '0.75rem', fontWeight: 600 } } },
   },
 });

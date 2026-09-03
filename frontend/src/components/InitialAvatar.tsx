@@ -8,14 +8,15 @@ export function InitialAvatar({ firstName, lastName, size = 36 }: { firstName: s
   return (
     <Avatar
       aria-hidden="true"
-      sx={{
+      sx={(theme) => ({
         width: size,
         height: size,
-        bgcolor: '#DBEAFE',
-        color: '#1E3A8A',
+        bgcolor: 'primary.light',
+        color: 'primary.dark',
         fontSize: size <= 32 ? 11 : 13,
         fontWeight: 700,
-      }}
+        ...theme.applyStyles('dark', { color: 'primary.contrastText' }),
+      })}
     >
       {initials(firstName, lastName)}
     </Avatar>

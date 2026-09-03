@@ -106,7 +106,7 @@ export function UserDetailPage() {
           </SectionCard>
           <SectionCard title="Addresses" subtitle={`${activeAddresses.length} ${activeAddresses.length === 1 ? 'address' : 'addresses'} on file`} action={!user.deleted ? <Button component={RouterLink} to={`/users/${user.id}/addresses/new`} state={editState} size="small" variant="contained" startIcon={<AddRoundedIcon />}>Add address</Button> : undefined}>
             {activeAddresses.length ? activeAddresses.map((address, index) => <AddressRow key={address.id} user={user} address={address} index={index + 1} navigationState={editState} archived={false} onArchive={() => setPendingAction({ kind: 'archive-address', address })} />) : <EmptyAddresses disabled={user.deleted} />}
-            {archivedAddresses.length > 0 && <Box sx={{ p: 2, bgcolor: '#F8FAFC', borderTop: '1px solid', borderColor: 'divider' }}><Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Archived addresses</Typography><Stack spacing={1} sx={{ mt: 1.5 }}>{archivedAddresses.map((address) => <AddressRow key={address.id} user={user} address={address} index={address.displayOrder} navigationState={editState} archived onArchive={() => setPendingAction({ kind: 'restore-address', address })} />)}</Stack></Box>}
+            {archivedAddresses.length > 0 && <Box sx={{ p: 2, bgcolor: 'background.default', borderTop: '1px solid', borderColor: 'divider' }}><Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em' }}>Archived addresses</Typography><Stack spacing={1} sx={{ mt: 1.5 }}>{archivedAddresses.map((address) => <AddressRow key={address.id} user={user} address={address} index={address.displayOrder} navigationState={editState} archived onArchive={() => setPendingAction({ kind: 'restore-address', address })} />)}</Stack></Box>}
           </SectionCard>
         </Box>
         <Box component="aside" sx={{ width: { xs: '100%', lg: 300 }, flexShrink: 0 }} aria-label="Profile record actions">
@@ -147,7 +147,7 @@ function AddressRow({ user, address, index, navigationState, archived, onArchive
       <Box sx={{ minWidth: 0, flex: 1 }}>
         <Stack direction="row" spacing={0.75} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
           <Typography variant="body2" sx={{ fontWeight: 700 }}>{address.label}</Typography>
-          {address.primary && <Chip size="small" label="Primary" sx={{ height: 22, bgcolor: '#DCFCE7', color: '#166534', fontSize: 10, fontWeight: 700 }} />}
+          {address.primary && <Chip size="small" label="Primary" sx={(theme) => ({ height: 22, bgcolor: 'rgba(var(--mui-palette-success-mainChannel) / 0.14)', color: 'success.dark', fontSize: 10, fontWeight: 700, ...theme.applyStyles('dark', { bgcolor: 'rgba(var(--mui-palette-success-mainChannel) / 0.18)', color: 'success.light' }) })} />}
           {archived && <StatusChip deleted />}
         </Stack>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25, overflowWrap: 'anywhere' }}>{formatAddress(address)}</Typography>

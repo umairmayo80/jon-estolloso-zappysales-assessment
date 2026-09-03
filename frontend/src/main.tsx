@@ -18,7 +18,15 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={appTheme}>
+    <ThemeProvider
+      theme={appTheme}
+      defaultMode="system"
+      modeStorageKey="profile-directory-mode"
+      colorSchemeStorageKey="profile-directory-color-scheme"
+      disableTransitionOnChange
+      forceThemeRerender
+      noSsr
+    >
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <ToastProvider>

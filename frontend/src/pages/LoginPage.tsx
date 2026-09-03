@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { getProblemMessage } from '../api/client';
 import { useAuth } from '../auth/AuthProvider';
+import { ColorModeMenu } from '../components/ColorModeMenu';
 import { FormErrorSummary, fieldId } from '../components/FormErrorSummary';
 
 const loginSchema = z.object({
@@ -48,25 +49,34 @@ export function LoginPage() {
   };
 
   return (
-    <Box sx={{ display: 'grid', minHeight: '100vh', gridTemplateColumns: { md: 'minmax(440px, 1.05fr) minmax(440px, 0.95fr)' }, bgcolor: 'background.paper' }}>
-      <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'space-between', p: { md: 6, lg: 8 }, color: '#E2E8F0', bgcolor: '#111827' }}>
+    <Box sx={{ position: 'relative', display: 'grid', minHeight: '100vh', gridTemplateColumns: { md: 'minmax(440px, 1.05fr) minmax(440px, 0.95fr)' }, bgcolor: 'background.paper' }}>
+      <Box sx={{ position: 'absolute', zIndex: 1, top: { xs: 1, sm: 2 }, right: { xs: 1, sm: 2 } }}><ColorModeMenu /></Box>
+      <Box sx={(theme) => ({
+        display: { xs: 'none', md: 'flex' },
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        p: { md: 6, lg: 8 },
+        color: '#E2E8F0',
+        bgcolor: '#111827',
+        ...theme.applyStyles('dark', { color: 'text.primary', bgcolor: 'background.paper' }),
+      })}>
         <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-          <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 32, height: 32, borderRadius: 1.5, bgcolor: 'primary.main', color: '#fff', fontSize: 10, fontWeight: 800 }}>PD</Box>
+          <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 32, height: 32, borderRadius: 1.5, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: 10, fontWeight: 800 }}>PD</Box>
           <Typography sx={{ fontWeight: 700, letterSpacing: '-0.02em' }}>Profile Directory</Typography>
         </Stack>
         <Box sx={{ maxWidth: 490 }}>
-          <Typography component="h1" sx={{ mb: 2, color: '#fff', fontSize: { md: 32, lg: 38 }, fontWeight: 700, letterSpacing: '-0.045em', lineHeight: 1.13 }}>Keep every profile and address in one dependable place.</Typography>
-          <Typography sx={{ color: '#94A3B8', fontSize: 16, lineHeight: 1.6 }}>A focused administrative workspace for maintaining people records and their associated addresses with care.</Typography>
+          <Typography component="h1" sx={(theme) => ({ mb: 2, color: '#FFFFFF', fontSize: { md: 32, lg: 38 }, fontWeight: 700, letterSpacing: '-0.045em', lineHeight: 1.13, ...theme.applyStyles('dark', { color: 'text.primary' }) })}>Keep every profile and address in one dependable place.</Typography>
+          <Typography sx={(theme) => ({ color: '#94A3B8', fontSize: 16, lineHeight: 1.6, ...theme.applyStyles('dark', { color: 'text.secondary' }) })}>A focused administrative workspace for maintaining people records and their associated addresses with care.</Typography>
         </Box>
-        <Stack direction="row" spacing={3} sx={{ color: '#CBD5E1' }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}><LockOutlinedIcon sx={{ fontSize: 16, color: '#60A5FA' }} /><Typography variant="body2">Secure cookie session</Typography></Stack>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}><VerifiedUserOutlinedIcon sx={{ fontSize: 16, color: '#60A5FA' }} /><Typography variant="body2">Administrator access</Typography></Stack>
+        <Stack direction="row" spacing={3} sx={(theme) => ({ color: '#CBD5E1', ...theme.applyStyles('dark', { color: 'text.secondary' }) })}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}><LockOutlinedIcon sx={{ fontSize: 16, color: 'primary.light' }} /><Typography variant="body2">Secure cookie session</Typography></Stack>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}><VerifiedUserOutlinedIcon sx={{ fontSize: 16, color: 'primary.light' }} /><Typography variant="body2">Administrator access</Typography></Stack>
         </Stack>
       </Box>
       <Box sx={{ display: 'flex', alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'center', p: { xs: 2, sm: 4, md: 6 }, bgcolor: 'background.default' }}>
-        <Paper component="section" elevation={0} sx={{ width: '100%', maxWidth: 400, border: { xs: '1px solid #E4ECFC', md: 'none' }, bgcolor: { xs: 'background.paper', md: 'transparent' }, p: { xs: 3, sm: 4, md: 0 } }} aria-labelledby="login-heading">
+        <Paper component="section" elevation={0} sx={{ width: '100%', maxWidth: 400, border: { xs: '1px solid', md: 'none' }, borderColor: 'divider', bgcolor: { xs: 'background.paper', md: 'transparent' }, p: { xs: 3, sm: 4, md: 0 } }} aria-labelledby="login-heading">
           <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', display: { md: 'none' }, mb: 5 }}>
-            <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: 1.5, bgcolor: 'primary.main', color: '#fff', fontSize: 10, fontWeight: 800 }}>PD</Box>
+            <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: 1.5, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: 10, fontWeight: 800 }}>PD</Box>
             <Typography sx={{ fontWeight: 700 }}>Profile Directory</Typography>
           </Stack>
           <Typography component="h2" id="login-heading" variant="h1" sx={{ fontSize: 26, mb: 1 }}>Welcome back</Typography>

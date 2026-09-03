@@ -6,6 +6,7 @@ import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../auth/AuthProvider';
+import { ColorModeMenu } from './ColorModeMenu';
 
 const railWidth = 240;
 
@@ -25,7 +26,21 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
         component={NavLink}
         to="/users"
         onClick={onNavigate}
-        sx={{ minHeight: 44, borderRadius: 1, color: 'text.secondary', '&.active': { color: 'primary.dark', bgcolor: '#EFF6FF', fontWeight: 700, '&::before': { content: '""', position: 'absolute', left: -12, top: 8, bottom: 8, width: 3, borderRadius: '0 4px 4px 0', bgcolor: 'primary.main' } } }}
+        sx={(theme) => ({
+          minHeight: 44,
+          borderRadius: 1,
+          color: 'text.secondary',
+          '&.active': {
+            color: 'primary.dark',
+            bgcolor: 'rgba(var(--mui-palette-primary-mainChannel) / 0.08)',
+            fontWeight: 700,
+            '&::before': { content: '""', position: 'absolute', left: -12, top: 8, bottom: 8, width: 3, borderRadius: '0 4px 4px 0', bgcolor: 'primary.main' },
+            ...theme.applyStyles('dark', {
+              color: 'primary.light',
+              bgcolor: 'rgba(var(--mui-palette-primary-mainChannel) / 0.18)',
+            }),
+          },
+        })}
       >
         <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}><PeopleAltOutlinedIcon fontSize="small" /></ListItemIcon>
         <ListItemText primary="Directory" slotProps={{ primary: { sx: { fontSize: 13, fontWeight: 'inherit' } } }} />
@@ -56,7 +71,7 @@ export function AppShell() {
       <Navigation onNavigate={() => setMobileNavOpen(false)} />
       <Box sx={{ mt: 'auto', p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
         <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-          <Avatar sx={{ width: 32, height: 32, bgcolor: '#E0E7FF', color: '#3730A3', fontSize: 11, fontWeight: 700 }}>{initials(admin?.displayName ?? 'Administrator')}</Avatar>
+          <Avatar sx={(theme) => ({ width: 32, height: 32, bgcolor: 'primary.light', color: 'primary.dark', fontSize: 11, fontWeight: 700, ...theme.applyStyles('dark', { color: 'primary.contrastText' }) })}>{initials(admin?.displayName ?? 'Administrator')}</Avatar>
           <Box sx={{ minWidth: 0, flex: 1 }}><Typography noWrap variant="body2" sx={{ fontWeight: 700 }}>{admin?.displayName ?? 'Administrator'}</Typography><Typography noWrap variant="caption" color="text.secondary">Administrator</Typography></Box>
           <Tooltip title="Sign out"><IconButton aria-label="Sign out" size="small" onClick={() => void handleLogout()}><LogoutRoundedIcon fontSize="small" /></IconButton></Tooltip>
         </Stack>
@@ -70,12 +85,15 @@ export function AppShell() {
       {!isMobile && <Drawer variant="permanent" open slotProps={{ paper: { sx: { width: railWidth, borderRight: '1px solid', borderColor: 'divider', boxSizing: 'border-box' } } }}>{railContents}</Drawer>}
       {isMobile && <Drawer variant="temporary" open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} ModalProps={{ keepMounted: true }} slotProps={{ paper: { sx: { width: 288 } } }}>{railContents}</Drawer>}
       <Box sx={{ ml: { md: `${railWidth}px` }, minHeight: '100vh' }}>
-        <AppBar position="sticky" elevation={0} color="inherit" sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(12px)' }}>
+        <AppBar position="sticky" elevation={0} color="inherit" sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', backdropFilter: 'blur(12px)' }}>
           <Toolbar sx={{ minHeight: { xs: '58px !important', md: '64px !important' }, px: { xs: 1.5, md: 3.75 } }}>
-            {isMobile && <IconButton edge="start" aria-label="Open navigation" onClick={() => setMobileNavOpen(true)} sx={{ mr: 1 }}><MenuRoundedIcon /></IconButton>}
+            {isMobile && <IconButton aria-label="Open navigation" onClick={() => setMobileNavOpen(true)} sx={{ mr: 1 }}><MenuRoundedIcon /></IconButton>}
             <Typography variant="body2" color="text.secondary"><Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>Directory</Box><Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}> / Profile management</Box></Typography>
             <Box sx={{ flex: 1 }} />
-            {isMobile && <Button aria-label="Sign out" color="inherit" size="small" startIcon={<LogoutRoundedIcon />} onClick={() => void handleLogout()}>Sign out</Button>}
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+              <ColorModeMenu />
+              {isMobile && <Button aria-label="Sign out" color="inherit" size="small" startIcon={<LogoutRoundedIcon />} onClick={() => void handleLogout()}>Sign out</Button>}
+            </Stack>
           </Toolbar>
         </AppBar>
         <Box component="main" id="main-content" tabIndex={-1} sx={{ outline: 'none', maxWidth: 1320, mx: 'auto', px: { xs: 1.5, sm: 3, lg: 4 }, py: { xs: 2.5, md: 4 } }}>

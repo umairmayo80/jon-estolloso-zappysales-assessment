@@ -6,6 +6,34 @@
     <meta name="theme-color" content="#2563EB" />
     <meta name="description" content="A secure administrative workspace for profiles and addresses." />
     <title>Profile Directory</title>
+    <script>
+      (() => {
+        try {
+          const root = document.documentElement;
+          const storedMode = localStorage.getItem('profile-directory-mode');
+          const mode = storedMode === 'light' || storedMode === 'dark' || storedMode === 'system' ? storedMode : 'system';
+          const lightScheme = localStorage.getItem('profile-directory-color-scheme-light') || 'light';
+          const darkScheme = localStorage.getItem('profile-directory-color-scheme-dark') || 'dark';
+          const colorScheme = mode === 'system'
+            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? darkScheme : lightScheme)
+            : (mode === 'dark' ? darkScheme : lightScheme);
+
+          root.removeAttribute('data-light');
+          root.removeAttribute('data-dark');
+          root.setAttribute(`data-${colorScheme}`, '');
+          root.setAttribute('data-mui-color-scheme', colorScheme);
+          root.style.colorScheme = colorScheme;
+        } catch {
+          const root = document.documentElement;
+          const colorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          root.removeAttribute('data-light');
+          root.removeAttribute('data-dark');
+          root.setAttribute(`data-${colorScheme}`, '');
+          root.setAttribute('data-mui-color-scheme', colorScheme);
+          root.style.colorScheme = colorScheme;
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

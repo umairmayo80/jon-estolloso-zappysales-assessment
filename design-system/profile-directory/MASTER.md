@@ -15,28 +15,49 @@
 
 ## Global Rules
 
-### Color Palette
+### Color Schemes
+
+Profile Directory supports both a light and deep-slate dark scheme. Semantic
+CSS variables retain the same meaning in each scheme; MUI selects their values
+with its `data` color-scheme selector and starts from the system preference.
+
+#### Light
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#2563EB` | `--color-primary` |
+| Primary / Ring | `#2563EB` | `--color-primary`, `--color-ring` |
 | On Primary | `#FFFFFF` | `--color-on-primary` |
-| Secondary | `#3B82F6` | `--color-secondary` |
-| On Secondary | `#000000` | `--color-on-secondary` |
-| Accent/CTA | `#059669` | `--color-accent` |
-| On Accent/CTA | `#000000` | `--color-on-accent` |
+| Success / On Success | `#047857` / `#FFFFFF` | `--color-accent` |
+| Warning / On Warning | `#B45309` / `#FFFFFF` | `--color-warning` |
 | Background | `#F8FAFC` | `--color-background` |
 | Foreground | `#0F172A` | `--color-foreground` |
 | Card | `#FFFFFF` | `--color-card` |
 | Card Foreground | `#0F172A` | `--color-card-foreground` |
-| Muted | `#F1F5FD` | `--color-muted` |
 | Muted Foreground | `#475569` | `--color-muted-foreground` |
 | Border | `#E4ECFC` | `--color-border` |
-| Destructive | `#DC2626` | `--color-destructive` |
-| On Destructive | `#FFFFFF` | `--color-on-destructive` |
-| Ring | `#2563EB` | `--color-ring` |
+| Destructive / On Destructive | `#DC2626` / `#FFFFFF` | `--color-destructive` |
 
-**Color Notes:** Professional blue + deal green
+#### Deep-slate dark
+
+| Role | Hex | CSS Variable |
+|------|-----|--------------|
+| Primary / Ring | `#60A5FA` | `--color-primary`, `--color-ring` |
+| On Primary | `#0F172A` | `--color-on-primary` |
+| Success / On Success | `#34D399` / `#052E16` | `--color-accent` |
+| Warning / On Warning | `#FBBF24` / `#451A03` | `--color-warning` |
+| Background / Canvas | `#0F172A` | `--color-background` |
+| Foreground | `#F8FAFC` | `--color-foreground` |
+| Card / Raised surface | `#172033` | `--color-card` |
+| Card Foreground | `#F8FAFC` | `--color-card-foreground` |
+| Muted Foreground | `#CBD5E1` | `--color-muted-foreground` |
+| Border | `#334155` | `--color-border` |
+| Destructive / On Destructive | `#F87171` / `#450A0A` | `--color-destructive` |
+
+**Color notes:** Professional blue remains the navigational/action anchor.
+Dark mode uses light text and a light-blue focus/action color on deep slate;
+never reuse a light-mode foreground or white button label without checking its
+scheme-specific contrast. Each primary, success, warning, and destructive
+control needs an on-color label with at least 4.5:1 contrast.
 
 ### Typography
 
@@ -82,8 +103,8 @@
 ```css
 /* Primary Button */
 .btn-primary {
-  background: #059669;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -99,8 +120,8 @@
 /* Secondary Button */
 .btn-secondary {
   background: transparent;
-  color: #2563EB;
-  border: 2px solid #2563EB;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -113,7 +134,8 @@
 
 ```css
 .card {
-  background: #F8FAFC;
+  background: var(--color-card);
+  color: var(--color-card-foreground);
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -132,16 +154,18 @@
 ```css
 .input {
   padding: 12px 16px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
+  color: var(--color-foreground);
+  background: var(--color-card);
   font-size: 16px;
   transition: border-color 200ms ease;
 }
 
 .input:focus {
-  border-color: #2563EB;
+  border-color: var(--color-ring);
   outline: none;
-  box-shadow: 0 0 0 3px #2563EB20;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 22%, transparent);
 }
 ```
 
@@ -154,7 +178,8 @@
 }
 
 .modal {
-  background: white;
+  background: var(--color-card);
+  color: var(--color-card-foreground);
   border-radius: 16px;
   padding: 32px;
   box-shadow: var(--shadow-xl);
@@ -215,6 +240,8 @@ gsap.from(el, { opacity: 0, y: 12, duration: 0.35, ease: 'power1.out', scrollTri
 - ❌ **Low contrast text** — Maintain 4.5:1 minimum contrast ratio
 - ❌ **Instant state changes** — Always use transitions (150-300ms)
 - ❌ **Invisible focus states** — Focus states must be visible for a11y
+- ❌ **Light-only color assumptions** — Every foreground, border, and control
+  must resolve through the active color scheme.
 
 ---
 
@@ -226,7 +253,8 @@ Before delivering any UI code, verify:
 - [ ] All icons from consistent icon set (Heroicons/Lucide)
 - [ ] `cursor-pointer` on all clickable elements
 - [ ] Hover states with smooth transitions (150-300ms)
-- [ ] Light mode: text contrast 4.5:1 minimum
+- [ ] Light and deep-slate dark: normal text contrast 4.5:1 minimum
+- [ ] Light and deep-slate dark: focus/control contrast 3:1 minimum with a visible 2px focus indicator
 - [ ] Focus states visible for keyboard navigation
 - [ ] `prefers-reduced-motion` respected
 - [ ] Responsive: 375px, 768px, 1024px, 1440px

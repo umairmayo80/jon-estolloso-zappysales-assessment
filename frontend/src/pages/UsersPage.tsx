@@ -133,7 +133,7 @@ export function UsersPage() {
             disableRowSelectionOnClick
             onRowClick={({ row }) => openUser(row.id)}
             getRowClassName={({ row }) => row.id === selectedId ? 'is-selected-row' : ''}
-            sx={{ border: 0, '--DataGrid-rowBorderColor': '#EDF2F8', '& .MuiDataGrid-footerContainer': { borderTopColor: '#E4ECFC' }, '& .MuiDataGrid-cell': { display: 'flex', alignItems: 'center' } }}
+            sx={{ border: 0, '--DataGrid-rowBorderColor': 'var(--mui-palette-divider)', '& .MuiDataGrid-footerContainer': { borderTopColor: 'divider' }, '& .MuiDataGrid-cell': { display: 'flex', alignItems: 'center' } }}
           />}
           {showMobileCards && <Stack spacing={1.25} aria-label="Profile cards">
             {(usersQuery.data?.content ?? []).map((user) => <Card key={user.id}><CardActionArea onClick={() => openUser(user.id)} sx={{ minHeight: 104 }}><CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}><Stack direction="row" spacing={1.25} sx={{ justifyContent: 'space-between' }}><PersonCell user={user} /><StatusChip deleted={user.deleted} /></Stack><Divider sx={{ my: 1.25 }} /><Stack direction="row" sx={{ justifyContent: 'space-between', color: 'text.secondary' }}><Typography variant="caption">{user.addressCount} {user.addressCount === 1 ? 'address' : 'addresses'}</Typography><Typography variant="caption">Updated {formatUpdatedAt(user.updatedAt)}</Typography></Stack></CardContent></CardActionArea></Card>) }
