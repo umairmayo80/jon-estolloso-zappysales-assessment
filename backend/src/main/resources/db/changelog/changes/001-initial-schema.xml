@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+    <changeSet id="001-create-admin-accounts" author="profile-directory">
+        <createTable tableName="admin_accounts">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="email" type="VARCHAR(320)"><constraints nullable="false" unique="true"/></column>
+            <column name="password_hash" type="VARCHAR(100)"><constraints nullable="false"/></column>
+            <column name="display_name" type="VARCHAR(160)"><constraints nullable="false"/></column>
+            <column name="role" type="VARCHAR(32)" defaultValue="ADMIN"><constraints nullable="false"/></column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true"><constraints nullable="false"/></column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-create-user-profiles" author="profile-directory">
+        <createTable tableName="user_profiles">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="email" type="VARCHAR(320)"><constraints nullable="false" unique="true"/></column>
+            <column name="first_name" type="VARCHAR(100)"><constraints nullable="false"/></column>
+            <column name="last_name" type="VARCHAR(100)"><constraints nullable="false"/></column>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="deleted_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_profiles" baseColumnNames="deleted_by" constraintName="fk_user_profiles_deleted_by" referencedTableName="admin_accounts" referencedColumnNames="id"/>
+        <createIndex tableName="user_profiles" indexName="ix_user_profiles_active_name">
+            <column name="deleted_at"/><column name="last_name"/><column name="first_name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="003-create-addresses" author="profile-directory">
+        <createTable tableName="addresses">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="user_profile_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="label" type="VARCHAR(80)"><constraints nullable="false"/></column>
+            <column name="line1" type="VARCHAR(180)"><constraints nullable="false"/></column>
+            <column name="line2" type="VARCHAR(180)"/>
+            <column name="city" type="VARCHAR(120)"><constraints nullable="false"/></column>
+            <column name="region" type="VARCHAR(120)"/>
+            <column name="postal_code" type="VARCHAR(32)"/>
+            <column name="country_code" type="VARCHAR(2)"><constraints nullable="false"/></column>
+            <column name="is_primary" type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false"/></column>
+            <column name="display_order" type="INTEGER" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="deleted_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="addresses" baseColumnNames="user_profile_id" constraintName="fk_addresses_user_profile" referencedTableName="user_profiles" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="addresses" baseColumnNames="deleted_by" constraintName="fk_addresses_deleted_by" referencedTableName="admin_accounts" referencedColumnNames="id"/>
+        <createIndex tableName="addresses" indexName="ix_addresses_profile_active">
+            <column name="user_profile_id"/><column name="deleted_at"/><column name="display_order"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="004-create-refresh-sessions" author="profile-directory">
+        <createTable tableName="refresh_sessions">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="admin_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="token_hash" type="VARCHAR(64)"><constraints nullable="false" unique="true"/></column>
+            <column name="family_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="absolute_expires_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="revoked_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="replaced_by_id" type="UUID"/>
+            <column name="reuse_detected_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_used_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="user_agent" type="VARCHAR(512)"/>
+            <column name="ip_address" type="VARCHAR(64)"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="refresh_sessions" baseColumnNames="admin_id" constraintName="fk_refresh_sessions_admin" referencedTableName="admin_accounts" referencedColumnNames="id"/>
+        <createIndex tableName="refresh_sessions" indexName="ix_refresh_sessions_family"><column name="family_id"/></createIndex>
+        <createIndex tableName="refresh_sessions" indexName="ix_refresh_sessions_admin_active"><column name="admin_id"/><column name="revoked_at"/><column name="expires_at"/></createIndex>
+    </changeSet>
+
+    <changeSet id="005-create-audit-events" author="profile-directory">
+        <createTable tableName="audit_events">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="actor_admin_id" type="UUID"/>
+            <column name="event_type" type="VARCHAR(80)"><constraints nullable="false"/></column>
+            <column name="target_type" type="VARCHAR(80)"><constraints nullable="false"/></column>
+            <column name="target_id" type="UUID"/>
+            <column name="request_id" type="VARCHAR(100)"><constraints nullable="false"/></column>
+            <column name="metadata" type="TEXT" defaultValue="{}"><constraints nullable="false"/></column>
+            <column name="occurred_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"><constraints nullable="false"/></column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="audit_events" baseColumnNames="actor_admin_id" constraintName="fk_audit_events_actor" referencedTableName="admin_accounts" referencedColumnNames="id"/>
+        <createIndex tableName="audit_events" indexName="ix_audit_events_target"><column name="target_type"/><column name="target_id"/><column name="occurred_at" descending="true"/></createIndex>
+        <createIndex tableName="audit_events" indexName="ix_audit_events_actor"><column name="actor_admin_id"/><column name="occurred_at" descending="true"/></createIndex>
+    </changeSet>
+
+    <changeSet id="006-postgresql-invariants" author="profile-directory" dbms="postgresql">
+        <sql splitStatements="false"><![CDATA[
+            ALTER TABLE admin_accounts ADD CONSTRAINT ck_admin_accounts_email_normalized CHECK (email = lower(email));
+            ALTER TABLE admin_accounts ADD CONSTRAINT ck_admin_accounts_role CHECK (role = 'ADMIN');
+            ALTER TABLE user_profiles ADD CONSTRAINT ck_user_profiles_email_normalized CHECK (email = lower(email));
+            ALTER TABLE addresses ADD CONSTRAINT ck_addresses_country_code_uppercase CHECK (country_code = upper(country_code));
+            ALTER TABLE addresses ADD CONSTRAINT ck_addresses_display_order CHECK (display_order >= 0);
+            ALTER TABLE refresh_sessions ADD CONSTRAINT ck_refresh_session_expiry CHECK (expires_at <= absolute_expires_at);
+            CREATE UNIQUE INDEX uq_addresses_active_primary ON addresses (user_profile_id) WHERE is_primary AND deleted_at IS NULL;
+            CREATE OR REPLACE FUNCTION prevent_audit_event_mutation()
+            RETURNS trigger AS $$
+            BEGIN
+                RAISE EXCEPTION 'audit_events is append-only';
+            END;
+            $$ LANGUAGE plpgsql;
+            CREATE TRIGGER trg_audit_events_immutable BEFORE UPDATE OR DELETE ON audit_events
+            FOR EACH ROW EXECUTE FUNCTION prevent_audit_event_mutation();
+        ]]></sql>
+    </changeSet>
+</databaseChangeLog>
