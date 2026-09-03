@@ -1,0 +1,49 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+# Fixed, non-production signing fixtures used only by the test profile.
+!backend/src/test/resources/keys/jwt-test-private.pem
+!backend/src/test/resources/keys/jwt-test-public.pem
+
+# Temp files
+output/*
+!output/pdf/
+output/pdf/*
+!output/pdf/.gitkeep
+
+# Java / Maven
+backend/target/
+*.class
+*.log
+
+# Node / Vite / test output
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/.vite/
+
+# Python / PDF tooling
+__pycache__/
+*.py[cod]
+
+# Generated artifacts
+design/previews/
+docs/generated/
+
+# Local service data
+.docker/
+postgres-data/

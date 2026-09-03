@@ -1,0 +1,28 @@
+name: profile-directory
+
+services:
+  postgres:
+    image: postgres:17.6
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-profile_directory}
+      POSTGRES_USER: ${POSTGRES_USER:-profile_directory}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-profile_directory}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  postgres-data:
+    name: profile-directory-postgres-data
