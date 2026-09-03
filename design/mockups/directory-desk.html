@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Directory Desk — Profile Directory mockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink:#0f172a; --sub:#475569; --blue:#2563eb; --line:#e4ecfc; --canvas:#f8fafc; --white:#fff; --green:#047857; --red:#dc2626; --nav:#111827; }
+      * { box-sizing:border-box; }
+      html { scroll-behavior:smooth; }
+      body { margin:0; background:#eef3fb; color:var(--ink); font:14px/1.5 Inter,system-ui,sans-serif; }
+      a { color:inherit; }
+      .reviewbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:48px; padding:8px max(20px,calc((100vw - 1400px)/2)); color:#e2e8f0; background:#0f172a; font-size:12px; }
+      .reviewbar strong { color:#fff; font-size:13px; }
+      .reviewlinks { display:flex; gap:18px; }
+      .reviewlinks a { color:#cbd5e1; text-decoration:none; }
+      .reviewlinks a:hover { color:#fff; }
+      .stage { max-width:1440px; margin:0 auto; padding:32px 20px 72px; }
+      .stage > header { display:flex; align-items:end; justify-content:space-between; gap:24px; margin:0 0 22px; }
+      .eyebrow { margin:0 0 5px; color:var(--blue); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+      h1,h2,h3,p { margin-top:0; }
+      h1 { margin-bottom:0; font-size:26px; line-height:1.2; letter-spacing:-.03em; }
+      h2 { margin-bottom:0; font-size:20px; letter-spacing:-.02em; }
+      .note { margin:0; color:var(--sub); max-width:580px; }
+      .frame { overflow:hidden; margin:0 0 48px; border:1px solid #dbe7f8; border-radius:14px; background:var(--white); box-shadow:0 16px 35px rgba(15,23,42,.08); }
+      .frame-label { display:flex; align-items:center; gap:8px; min-height:40px; padding:0 16px; border-bottom:1px solid var(--line); color:var(--sub); background:#fbfdff; font-size:12px; font-weight:600; }
+      .frame-label i { width:8px; height:8px; border-radius:50%; background:#22c55e; }
+      .login { display:grid; grid-template-columns:1.05fr .95fr; min-height:510px; }
+      .login-copy { display:flex; flex-direction:column; justify-content:space-between; padding:48px; color:#e2e8f0; background:var(--nav); }
+      .brand { display:flex; align-items:center; gap:10px; color:#fff; font-weight:700; letter-spacing:-.02em; }
+      .brand-mark { display:grid; place-items:center; width:30px; height:30px; border-radius:8px; color:#fff; background:var(--blue); font-size:12px; }
+      .login-copy h2 { max-width:440px; margin:28px 0 12px; color:#fff; font-size:32px; line-height:1.18; }
+      .login-copy p { max-width:460px; color:#94a3b8; font-size:15px; }
+      .trust { display:flex; gap:20px; color:#cbd5e1; font-size:12px; }
+      .trust span { display:flex; align-items:center; gap:7px; }
+      .trust b { width:7px; height:7px; border:2px solid #60a5fa; border-radius:50%; }
+      .login-form { display:flex; align-items:center; justify-content:center; padding:48px; background:#fff; }
+      .login-card { width:min(100%,360px); }
+      .login-card h3 { margin-bottom:7px; font-size:22px; letter-spacing:-.025em; }
+      .login-card > p { margin-bottom:28px; color:var(--sub); }
+      label { display:block; margin:0 0 7px; font-size:12px; font-weight:600; }
+      input { width:100%; min-height:44px; margin:0 0 18px; border:1px solid #cbd5e1; border-radius:8px; padding:0 12px; color:var(--ink); background:#fff; font:inherit; }
+      input:focus { outline:3px solid #bfdbfe; border-color:var(--blue); }
+      .button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; gap:8px; border:1px solid transparent; border-radius:8px; padding:0 15px; color:#fff; background:var(--blue); font:600 13px Inter,sans-serif; text-decoration:none; cursor:pointer; transition:background .18s ease,transform .18s ease; }
+      .button:hover { background:#1d4ed8; transform:translateY(-1px); }
+      .button.full { width:100%; }
+      .button.ghost { color:#1d4ed8; border-color:#bfdbfe; background:#fff; }
+      .button.ghost:hover { background:#eff6ff; }
+      .login-foot { margin:16px 0 0; color:#64748b; font-size:12px; text-align:center; }
+      .app { display:grid; grid-template-columns:232px minmax(0,1fr); min-height:700px; background:var(--canvas); }
+      .rail { display:flex; flex-direction:column; border-right:1px solid #e2e8f0; padding:22px 12px; background:#fff; }
+      .rail .brand { margin:0 10px 30px; color:var(--ink); }
+      .nav-title { margin:0 10px 8px; color:#94a3b8; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+      .nav-item { position:relative; display:flex; align-items:center; gap:10px; min-height:40px; margin:2px 0; border-radius:7px; padding:0 10px; color:#475569; font-size:13px; font-weight:500; text-decoration:none; }
+      .nav-item .glyph { width:18px; height:18px; border:1.5px solid currentColor; border-radius:4px; opacity:.8; }
+      .nav-item.active { color:#1d4ed8; background:#eff6ff; font-weight:700; }
+      .nav-item.active::before { position:absolute; left:-12px; top:8px; bottom:8px; width:3px; border-radius:0 3px 3px 0; background:var(--blue); content:""; }
+      .rail-foot { margin-top:auto; padding:12px 10px 0; border-top:1px solid #f1f5f9; color:#64748b; font-size:12px; }
+      .avatar { display:grid; place-items:center; flex:0 0 auto; width:32px; height:32px; border-radius:50%; color:#1e3a8a; background:#dbeafe; font-size:11px; font-weight:700; }
+      .workspace { min-width:0; }
+      .topbar { display:flex; align-items:center; justify-content:space-between; min-height:64px; padding:0 30px; border-bottom:1px solid #e2e8f0; background:rgba(255,255,255,.93); }
+      .crumb { color:#64748b; font-size:12px; }
+      .crumb b { color:#0f172a; }
+      .admin { display:flex; align-items:center; gap:10px; }
+      .admin small { display:block; color:#64748b; font-size:10px; }
+      .admin strong { display:block; font-size:12px; }
+        .menu { display:none; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
+        .menu span { display:block; width:15px; height:1.5px; border-radius:2px; background:currentColor; }
+      .content { max-width:1250px; margin:0 auto; padding:30px; }
+      .page-head { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin:0 0 25px; }
+      .page-head h2 { margin:0 0 5px; font-size:24px; }
+      .page-head p { margin:0; color:#64748b; }
+      .summary { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 20px; }
+      .stat { padding:13px 15px; border:1px solid var(--line); border-radius:9px; background:#fff; }
+      .stat span { display:block; color:#64748b; font-size:11px; font-weight:600; }
+      .stat b { display:block; margin-top:3px; font-size:18px; letter-spacing:-.02em; }
+      .directory { border:1px solid var(--line); border-radius:12px; background:#fff; }
+      .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px; border-bottom:1px solid var(--line); }
+      .search { display:flex; align-items:center; width:min(100%,330px); min-height:40px; gap:8px; border:1px solid #cbd5e1; border-radius:7px; padding:0 10px; color:#64748b; }
+      .search::before { width:13px; height:13px; border:1.5px solid #64748b; border-radius:50%; content:""; }
+      .search input { min-width:0; min-height:38px; margin:0; border:0; padding:0; outline:0; }
+      .filter { display:flex; align-items:center; gap:8px; }
+      .select { min-height:40px; border:1px solid #cbd5e1; border-radius:7px; padding:0 28px 0 10px; color:#334155; background:#fff; font:500 12px Inter,sans-serif; }
+      .table-wrap { overflow-x:auto; }
+      table { width:100%; min-width:720px; border-collapse:collapse; text-align:left; }
+      th { height:43px; padding:0 16px; color:#64748b; background:#fbfdff; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+      td { height:64px; padding:0 16px; border-top:1px solid #edf2f8; color:#334155; font-size:12px; }
+      tr.selected td { background:#f4f8ff; }
+      tr.selected td:first-child { box-shadow:inset 3px 0 var(--blue); }
+      .person { display:flex; align-items:center; gap:10px; }
+      .person .avatar { width:30px; height:30px; }
+      .person strong { display:block; color:#0f172a; font-size:13px; }
+      .person span { display:block; color:#64748b; font-size:11px; }
+      .chip { display:inline-flex; align-items:center; min-height:22px; border-radius:99px; padding:0 8px; color:#166534; background:#f0fdf4; font-size:10px; font-weight:700; }
+      .chip.muted { color:#475569; background:#f1f5f9; }
+      .row-link { color:#1d4ed8; font-weight:600; text-decoration:none; }
+      .pagination { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-top:1px solid #edf2f8; color:#64748b; font-size:11px; }
+      .pages { display:flex; gap:4px; }
+      .pages b,.pages span { display:grid; place-items:center; width:28px; height:28px; border:1px solid #e2e8f0; border-radius:6px; }
+      .pages b { color:#fff; border-color:#2563eb; background:#2563eb; }
+      .record-grid { display:grid; grid-template-columns:minmax(0,1fr) 310px; align-items:start; gap:20px; }
+      .record-main,.record-side { min-width:0; }
+      .back { display:inline-flex; align-items:center; gap:7px; margin:0 0 18px; color:#475569; font-size:12px; font-weight:600; text-decoration:none; }
+      .back::before { width:7px; height:7px; border-bottom:1.5px solid; border-left:1.5px solid; transform:rotate(45deg); content:""; }
+      .identity { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin:0 0 20px; padding:22px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+      .identity .person { gap:13px; }
+      .identity .avatar { width:46px; height:46px; font-size:13px; }
+      .identity h2 { margin:0 0 5px; font-size:21px; }
+      .identity p { margin:0; color:#64748b; font-size:12px; }
+      .section { margin:0 0 18px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+      .section-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:17px 20px; border-bottom:1px solid var(--line); }
+      .section-head h3 { margin:0; font-size:14px; }
+      .section-head span { color:#64748b; font-size:11px; }
+      .details { display:grid; grid-template-columns:repeat(2,1fr); gap:0; }
+      .detail { min-height:73px; padding:16px 20px; border-right:1px solid #edf2f8; border-bottom:1px solid #edf2f8; }
+      .detail:nth-child(2n) { border-right:0; }
+      .detail:nth-last-child(-n+2) { border-bottom:0; }
+      .detail span { display:block; margin:0 0 4px; color:#64748b; font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
+      .detail b { font-size:13px; font-weight:600; }
+      .address { display:grid; grid-template-columns:32px 1fr auto; gap:12px; align-items:start; padding:16px 20px; border-bottom:1px solid #edf2f8; }
+      .address:last-child { border-bottom:0; }
+      .address-index { display:grid; place-items:center; width:28px; height:28px; border:1px solid #cbd5e1; border-radius:7px; color:#475569; font-size:11px; font-weight:700; }
+      .address h4 { margin:0 0 3px; font-size:13px; }
+      .address p { margin:0; color:#64748b; font-size:12px; }
+      .link-button { color:#1d4ed8; border:0; padding:5px; background:transparent; font:600 12px Inter,sans-serif; cursor:pointer; }
+      .record-side .section { padding:18px; }
+      .record-side h3 { margin:0 0 13px; font-size:13px; }
+      .activity { position:relative; padding:0 0 17px 20px; color:#64748b; font-size:11px; }
+      .activity::before { position:absolute; left:4px; top:5px; width:7px; height:7px; border-radius:50%; background:#93c5fd; content:""; }
+      .activity::after { position:absolute; left:7px; top:14px; bottom:0; width:1px; background:#dbeafe; content:""; }
+      .activity:last-child { padding-bottom:0; }
+      .activity:last-child::after { display:none; }
+      .activity b { display:block; color:#334155; font-size:11px; }
+      .danger { border-color:#fee2e2 !important; }
+      .danger h3 { color:#991b1b; }
+      .danger p { margin:0 0 13px; color:#7f1d1d; font-size:11px; }
+      @media (max-width:700px) {
+        .reviewbar { padding:8px 14px; } .reviewlinks { display:none; } .stage { padding:18px 12px 50px; } .stage > header { display:block; } .stage > header .note { margin-top:9px; }
+        .login { grid-template-columns:1fr; } .login-copy { min-height:260px; padding:28px; } .login-copy h2 { margin:22px 0 10px; font-size:25px; } .trust { display:none; } .login-form { padding:32px 24px; }
+        .app { grid-template-columns:1fr; } .rail { display:none; } .topbar { min-height:58px; padding:0 16px; } .menu { display:flex; width:36px; height:36px; border:1px solid #dbeafe; border-radius:7px; color:#1d4ed8; background:#fff; } .admin > div { display:none; }
+        .content { padding:20px 14px; } .page-head { display:block; } .page-head .button { margin-top:16px; width:100%; } .summary { grid-template-columns:1fr 1fr; } .summary .stat:last-child { display:none; }
+        .toolbar { align-items:stretch; flex-direction:column; } .search { width:100%; } .filter { justify-content:space-between; } .filter .button { flex:1; } .table-wrap { display:none; } .mobile-cards { display:block !important; } .pagination { font-size:10px; }
+        .record-grid { grid-template-columns:1fr; } .identity { align-items:stretch; flex-direction:column; } .identity .button { width:100%; } .details { grid-template-columns:1fr; } .detail,.detail:nth-child(2n),.detail:nth-last-child(-n+2) { border-right:0; border-bottom:1px solid #edf2f8; } .detail:last-child { border-bottom:0; } .record-side { display:none; }
+      }
+      .mobile-cards { display:none; padding:10px; }
+      .mobile-card { display:block; margin:0 0 8px; border:1px solid #e2e8f0; border-radius:9px; padding:13px; color:inherit; text-decoration:none; }
+      .mobile-card:last-child { margin-bottom:0; } .mobile-card .card-top { display:flex; justify-content:space-between; gap:8px; } .mobile-card .person { min-width:0; } .mobile-card .person div { min-width:0; } .mobile-card .person span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; } .mobile-card footer { display:flex; justify-content:space-between; margin:11px 0 0 40px; color:#64748b; font-size:11px; }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition-duration:0.01ms !important; } }
+    </style>
+  </head>
+  <body>
+    <nav class="reviewbar" aria-label="Mockup sections"><strong>Profile Directory · mockup option A</strong><div class="reviewlinks"><a href="#login">Login</a><a href="#directory">Directory</a><a href="#record">Profile record</a></div></nav>
+    <main class="stage">
+      <header><div><p class="eyebrow">Selected direction</p><h1>Directory Desk</h1></div><p class="note">A light, precise B2B workspace built around fast scanning, safe editing, and readable address records.</p></header>
+
+      <section class="frame" id="login" aria-labelledby="login-title">
+        <div class="frame-label"><i></i> 01 · Administrator sign in</div>
+        <div class="login"><div class="login-copy"><div><div class="brand"><span class="brand-mark">PD</span> Profile Directory</div><h2>Keep every profile and address in one dependable place.</h2><p>A focused administrative workspace for reviewing managed profiles, maintaining addresses, and tracking changes with care.</p></div><div class="trust"><span><b></b> Secure cookie session</span><span><b></b> Administrator access</span></div></div><div class="login-form"><form class="login-card"><h3 id="login-title">Welcome back</h3><p>Sign in with your administrator account.</p><label for="email">Work email</label><input id="email" type="email" value="admin@directory.local" aria-label="Work email" /><label for="password">Password</label><input id="password" type="password" value="Password123!" aria-label="Password" /><a class="button full" href="#directory">Sign in securely</a><p class="login-foot">Your session is protected with HttpOnly cookies.</p></form></div></div>
+      </section>
+
+      <section class="frame" id="directory" aria-labelledby="directory-title">
+        <div class="frame-label"><i></i> 02 · 1440px directory workspace · card list below 700px</div>
+        <div class="app"><aside class="rail"><div class="brand"><span class="brand-mark">PD</span> Profile Directory</div><p class="nav-title">Workspace</p><a class="nav-item active" href="#directory"><span class="glyph"></span> Directory</a><div class="rail-foot">Signed in as<br /><strong>Administrator</strong></div></aside><div class="workspace"><header class="topbar"><span class="crumb"><b>Directory</b> / All people</span><div class="admin"><div><strong>Jordan Lee</strong><small>Administrator</small></div><span class="avatar">JL</span><button class="menu" aria-label="Open navigation"><span></span><span></span><span></span></button></div></header><div class="content"><div class="page-head"><div><h2 id="directory-title">People directory</h2><p>Manage profiles and associated addresses.</p></div><a class="button" href="#record">Add profile</a></div><div class="summary"><div class="stat"><span>Active profiles</span><b>1,284</b></div><div class="stat"><span>Addresses on file</span><b>2,763</b></div><div class="stat"><span>Updated this week</span><b>42</b></div></div><div class="directory"><div class="toolbar"><label class="search" for="directory-search"><input id="directory-search" placeholder="Search people by name or email" /></label><div class="filter"><select class="select" aria-label="Profile status"><option>Active profiles</option></select><a class="button ghost" href="#directory">Filters</a></div></div><div class="table-wrap"><table><thead><tr><th>Person</th><th>Email</th><th>Addresses</th><th>Status</th><th>Last updated</th><th></th></tr></thead><tbody><tr class="selected"><td><div class="person"><span class="avatar">MW</span><div><strong>Marisa Watson</strong><span>Profile #PD-0194</span></div></div></td><td>marisa.watson@example.com</td><td>2 on file</td><td><span class="chip">Active</span></td><td>Today, 10:14</td><td><a class="row-link" href="#record">Open</a></td></tr><tr><td><div class="person"><span class="avatar">CK</span><div><strong>Caleb Kim</strong><span>Profile #PD-0189</span></div></div></td><td>caleb.kim@example.com</td><td>1 on file</td><td><span class="chip">Active</span></td><td>Yesterday</td><td><a class="row-link" href="#record">Open</a></td></tr><tr><td><div class="person"><span class="avatar">AS</span><div><strong>Amina Sheikh</strong><span>amina.sheikh@example.com</span></div></div></td><td>amina.sheikh@example.com</td><td>3 on file</td><td><span class="chip">Active</span></td><td>Aug 28, 2026</td><td><a class="row-link" href="#record">Open</a></td></tr><tr><td><div class="person"><span class="avatar">RT</span><div><strong>Rowan Taylor</strong><span>Profile #PD-0174</span></div></div></td><td>rowan.taylor@example.com</td><td>1 on file</td><td><span class="chip muted">Review</span></td><td>Aug 27, 2026</td><td><a class="row-link" href="#record">Open</a></td></tr></tbody></table></div><div class="mobile-cards"><a class="mobile-card" href="#record"><div class="card-top"><div class="person"><span class="avatar">MW</span><div><strong>Marisa Watson</strong><span>marisa.watson@example.com</span></div></div><span class="chip">Active</span></div><footer><span>2 addresses</span><span>Updated today</span></footer></a><a class="mobile-card" href="#record"><div class="card-top"><div class="person"><span class="avatar">CK</span><div><strong>Caleb Kim</strong><span>caleb.kim@example.com</span></div></div><span class="chip">Active</span></div><footer><span>1 address</span><span>Updated yesterday</span></footer></a><a class="mobile-card" href="#record"><div class="card-top"><div class="person"><span class="avatar">AS</span><div><strong>Amina Sheikh</strong><span>amina.sheikh@example.com</span></div></div><span class="chip">Active</span></div><footer><span>3 addresses</span><span>Updated Aug 28</span></footer></a></div><div class="pagination"><span>Showing 1–20 of 1,284 profiles</span><span class="pages"><b>1</b><span>2</span><span>3</span></span></div></div></div></div></div>
+      </section>
+
+      <section class="frame" id="record" aria-labelledby="record-title">
+        <div class="frame-label"><i></i> 03 · Profile and address record</div>
+        <div class="app"><aside class="rail"><div class="brand"><span class="brand-mark">PD</span> Profile Directory</div><p class="nav-title">Workspace</p><a class="nav-item active" href="#directory"><span class="glyph"></span> Directory</a><a class="nav-item" href="#record"><span class="glyph"></span> Recent activity</a><div class="rail-foot">Signed in as<br /><strong>Administrator</strong></div></aside><div class="workspace"><header class="topbar"><span class="crumb">Directory / <b>Marisa Watson</b></span><div class="admin"><div><strong>Jordan Lee</strong><small>Administrator</small></div><span class="avatar">JL</span><button class="menu" aria-label="Open navigation"><span></span><span></span><span></span></button></div></header><div class="content"><a class="back" href="#directory">Back to directory</a><div class="record-grid"><div class="record-main"><div class="identity"><div class="person"><span class="avatar">MW</span><div><h2 id="record-title">Marisa Watson</h2><p>marisa.watson@example.com · Active profile</p></div></div><a class="button ghost" href="#record">Edit profile</a></div><section class="section"><header class="section-head"><div><h3>Profile details</h3><span>Information visible to administrators</span></div><button class="link-button">Edit</button></header><div class="details"><div class="detail"><span>First name</span><b>Marisa</b></div><div class="detail"><span>Last name</span><b>Watson</b></div><div class="detail"><span>Email</span><b>marisa.watson@example.com</b></div><div class="detail"><span>Record status</span><b><span class="chip">Active</span></b></div></div></section><section class="section"><header class="section-head"><div><h3>Addresses</h3><span>2 addresses on file</span></div><a class="button" href="#record">Add address</a></header><article class="address"><span class="address-index">1</span><div><h4>Home <span class="chip">Primary</span></h4><p>81 Magnolia Crescent, Apt 4B<br />Austin, TX 78704 · US</p></div><button class="link-button">Edit</button></article><article class="address"><span class="address-index">2</span><div><h4>Office</h4><p>700 Congress Avenue, Suite 1200<br />Austin, TX 78701 · US</p></div><button class="link-button">Edit</button></article></section></div><aside class="record-side"><section class="section"><h3>Record activity</h3><div class="activity"><b>Address updated</b>Jordan Lee · Today, 10:14</div><div class="activity"><b>Profile created</b>System import · Aug 12, 2026</div></section><section class="section danger"><h3>Profile status</h3><p>Deactivate to hide this profile from the default directory. It can be restored later.</p><button class="link-button">Deactivate profile</button></section></aside></div></div></div></div></div>
+      </section>
+    </main>
+  </body>
+</html>
