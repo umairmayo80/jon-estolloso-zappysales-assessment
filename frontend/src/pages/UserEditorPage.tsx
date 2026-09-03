@@ -39,12 +39,11 @@ export function UserEditorPage() {
   const { showToast } = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string>();
-  const [confirmLeave, setConfirmLeave] = useState(false);
   const [hasConflict, setHasConflict] = useState(false);
   const userQuery = useQuery({ queryKey: ['user', userId], queryFn: () => usersApi.get(userId!), enabled: isEditing });
   const { register, handleSubmit, reset, setError, formState: { errors, isDirty, isSubmitting } } = useForm<UserInput>({ resolver: zodResolver(userSchema), defaultValues: { firstName: '', lastName: '', email: '' }, mode: 'onBlur' });
   const navigationState = location.state as NavigationState | null;
-  useUnsavedChanges(isDirty);
+  const unsavedChanges = useUnsavedChanges(isDirty);
 
   useEffect(() => {
     // A background refetch must not wipe an administrator's in-progress draft.
@@ -63,7 +62,8 @@ export function UserEditorPage() {
       queryClient.setQueryData<ApiResult<UserDetail>>(['user', id], result);
       void queryClient.invalidateQueries({ queryKey: ['users'] });
       showToast({ severity: 'success', message: isEditing ? 'Profile changes saved.' : 'Profile created.' });
-      navigate(`/users/${id}`, { replace: true, state: navigationState });
+      reset(inputFromUser(result.data));
+      unsavedChanges.navigateWithoutPrompt(() => navigate(`/users/${id}`, { replace: true, state: navigationState }));
     },
     onError: (error) => {
       if (error instanceof ApiError && error.status === 412) {
@@ -82,7 +82,6 @@ export function UserEditorPage() {
   });
 
   const close = () => navigate(editorClosePath(userId), { replace: true, state: navigationState });
-  const requestClose = () => isDirty ? setConfirmLeave(true) : close();
   const useLatestValues = () => {
     if (userQuery.data?.data) reset(inputFromUser(userQuery.data.data));
     setHasConflict(false);
@@ -99,7 +98,7 @@ export function UserEditorPage() {
 
   return (
     <>
-      <EditorPanel title={isEditing ? 'Edit profile' : 'Add profile'} subtitle={isEditing ? 'Update the profile information below.' : 'Create a new managed profile.'} onClose={requestClose}>
+      <EditorPanel title={isEditing ? 'Edit profile' : 'Add profile'} subtitle={isEditing ? 'Update the profile information below.' : 'Create a new managed profile.'} onClose={close}>
         <Box component="form" noValidate onSubmit={handleSubmit(onSubmit, () => setSubmitted(true))} sx={{ p: { xs: 2, sm: 3 }, pb: 4 }}>
           <FormErrorSummary errors={errors} submitted={submitted} />
           {hasConflict && <Alert severity="warning" sx={{ mb: 2.5 }} action={<Button color="inherit" size="small" onClick={useLatestValues} disabled={userQuery.isFetching}>Use latest values</Button>}>This profile changed elsewhere. Your unsaved edits are still in this form; the latest version is being used for the next save.</Alert>}
@@ -110,12 +109,12 @@ export function UserEditorPage() {
             <TextField id={fieldId<UserInput>('email')} label="Email" type="email" fullWidth autoComplete="email" error={Boolean(errors.email)} helperText={errors.email?.message ?? 'Required. This email remains unique even when a profile is archived.'} {...register('email')} />
           </Stack>
           <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={1.25} sx={{ justifyContent: 'flex-end', mt: 4 }}>
-            <Button onClick={requestClose} disabled={isSubmitting}>Cancel</Button>
+            <Button onClick={close} disabled={isSubmitting}>Cancel</Button>
             <Button type="submit" variant="contained" disabled={isSubmitting || (hasConflict && userQuery.isFetching)} startIcon={isSubmitting ? <CircularProgress color="inherit" size={16} /> : <SaveRoundedIcon />}>{isSubmitting ? 'Saving…' : isEditing ? 'Save changes' : 'Create profile'}</Button>
           </Stack>
         </Box>
       </EditorPanel>
-      <ConfirmDialog open={confirmLeave} title="Discard unsaved changes?" description="Your edits have not been saved. If you leave now, they will be lost." confirmLabel="Discard changes" tone="error" onCancel={() => setConfirmLeave(false)} onConfirm={close} />
+      <ConfirmDialog open={unsavedChanges.isBlocked} title="Discard unsaved changes?" description="Your edits have not been saved. If you leave now, they will be lost." confirmLabel="Discard changes" tone="error" onCancel={unsavedChanges.keepEditing} onConfirm={unsavedChanges.discardChanges} />
     </>
   );
 }

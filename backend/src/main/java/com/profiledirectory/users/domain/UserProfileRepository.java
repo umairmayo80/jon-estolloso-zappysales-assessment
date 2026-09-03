@@ -12,6 +12,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> 
 
     boolean existsByEmail(String email);
 
+    Optional<UserProfile> findByEmail(String email);
+
     @Query("""
             select u from UserProfile u
             where (:status = 'all'

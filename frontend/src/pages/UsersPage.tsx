@@ -45,11 +45,11 @@ function formatUpdatedAt(value: string): string {
   return sameDay ? `Today, ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(date)}` : new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined }).format(date);
 }
 
-function PersonCell({ user }: { user: UserSummary }) {
+function PersonCell({ user, secondary = 'Profile record', wrapText = false }: { user: UserSummary; secondary?: string; wrapText?: boolean }) {
   return (
-    <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', minWidth: 0 }}>
+    <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', minWidth: 0, flex: 1 }}>
       <InitialAvatar firstName={user.firstName} lastName={user.lastName} size={32} />
-      <Box sx={{ minWidth: 0 }}><Typography noWrap variant="body2" sx={{ fontWeight: 700 }}>{user.firstName} {user.lastName}</Typography><Typography component="div" noWrap variant="caption" color="text.secondary">Profile record</Typography></Box>
+      <Box sx={{ minWidth: 0, flex: 1 }}><Typography noWrap={!wrapText} variant="body2" sx={{ fontWeight: 700, overflowWrap: wrapText ? 'anywhere' : undefined }}>{user.firstName} {user.lastName}</Typography><Typography component="div" noWrap={!wrapText} variant="caption" color="text.secondary" sx={{ minWidth: 0, overflowWrap: wrapText ? 'anywhere' : undefined }}>{secondary}</Typography></Box>
     </Stack>
   );
 }
@@ -140,7 +140,7 @@ export function UsersPage() {
             sx={{ border: 0, '--DataGrid-rowBorderColor': 'var(--mui-palette-divider)', '& .MuiDataGrid-footerContainer': { borderTopColor: 'divider' }, '& .MuiDataGrid-cell': { display: 'flex', alignItems: 'center' } }}
           />}
           {showMobileCards && <Stack spacing={1.25} aria-label="Profile cards">
-            {(usersQuery.data?.content ?? []).map((user) => <Card key={user.id}><CardActionArea onClick={() => openUser(user.id)} sx={{ minHeight: 104 }}><CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}><Stack direction="row" spacing={1.25} sx={{ justifyContent: 'space-between' }}><PersonCell user={user} /><StatusChip deleted={user.deleted} /></Stack><Divider sx={{ my: 1.25 }} /><Stack direction="row" sx={{ justifyContent: 'space-between', color: 'text.secondary' }}><Typography variant="caption">{user.addressCount} {user.addressCount === 1 ? 'address' : 'addresses'}</Typography><Typography variant="caption">Updated {formatUpdatedAt(user.updatedAt)}</Typography></Stack></CardContent></CardActionArea></Card>) }
+            {(usersQuery.data?.content ?? []).map((user) => <Card key={user.id} data-testid={`profile-card-${user.id}`} sx={{ minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}><CardActionArea onClick={() => openUser(user.id)} sx={{ minHeight: 128, maxWidth: '100%' }}><CardContent sx={{ minWidth: 0, p: 2, '&:last-child': { pb: 2 } }}><Stack direction="row" spacing={1.25} sx={{ alignItems: 'flex-start', justifyContent: 'space-between', minWidth: 0 }}><PersonCell user={user} secondary={user.email} wrapText /><Box sx={{ flex: '0 0 auto' }}><StatusChip deleted={user.deleted} /></Box></Stack><Divider sx={{ my: 1.25 }} /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: .25, sm: 1 }} sx={{ alignItems: { sm: 'center' }, justifyContent: 'space-between', minWidth: 0, color: 'text.secondary' }}><Typography variant="caption">{user.addressCount} {user.addressCount === 1 ? 'address' : 'addresses'}</Typography><Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>Updated {formatUpdatedAt(user.updatedAt)}</Typography></Stack></CardContent></CardActionArea></Card>) }
             {!usersQuery.data?.content.length && <Box sx={{ py: 5, textAlign: 'center' }}><Typography sx={{ fontWeight: 700 }}>No profiles found</Typography><Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>Try another search or status filter.</Typography></Box>}
           </Stack>}
         </>
@@ -150,7 +150,7 @@ export function UsersPage() {
   return (
     <Box>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5} sx={{ justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'flex-start' }, mb: 3 }}>
-        <Box><Typography component="h1" variant="h1">People directory</Typography><Typography color="text.secondary" sx={{ mt: .75 }}>Manage profile records and their associated addresses.</Typography></Box>
+        <Box><Typography component="h1" variant="h1" data-route-heading="true" tabIndex={-1}>People directory</Typography><Typography color="text.secondary" sx={{ mt: .75 }}>Manage profile records and their associated addresses.</Typography></Box>
         <Button component={RouterLink} to="/users/new" state={{ returnTo: `/users${location.search}`, scrollY: window.scrollY } satisfies NavigationState} variant="contained" startIcon={<AddRoundedIcon />}>Add profile</Button>
       </Stack>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2.5 }}>

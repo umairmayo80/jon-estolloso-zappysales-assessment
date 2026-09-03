@@ -65,7 +65,7 @@ export function LoginPage() {
           <Typography sx={{ fontWeight: 700, letterSpacing: '-0.02em' }}>Profile Directory</Typography>
         </Stack>
         <Box sx={{ maxWidth: 490 }}>
-          <Typography component="h1" sx={(theme) => ({ mb: 2, color: '#FFFFFF', fontSize: { md: 32, lg: 38 }, fontWeight: 700, letterSpacing: '-0.045em', lineHeight: 1.13, ...theme.applyStyles('dark', { color: 'text.primary' }) })}>Keep every profile and address in one dependable place.</Typography>
+          <Typography component="p" sx={(theme) => ({ mb: 2, color: '#FFFFFF', fontSize: { md: 32, lg: 38 }, fontWeight: 700, letterSpacing: '-0.045em', lineHeight: 1.13, ...theme.applyStyles('dark', { color: 'text.primary' }) })}>Keep every profile and address in one dependable place.</Typography>
           <Typography sx={(theme) => ({ color: '#94A3B8', fontSize: 16, lineHeight: 1.6, ...theme.applyStyles('dark', { color: 'text.secondary' }) })}>A focused administrative workspace for maintaining people records and their associated addresses with care.</Typography>
         </Box>
         <Stack direction="row" spacing={3} sx={(theme) => ({ color: '#CBD5E1', ...theme.applyStyles('dark', { color: 'text.secondary' }) })}>
@@ -79,7 +79,7 @@ export function LoginPage() {
             <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: 1.5, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: 10, fontWeight: 800 }}>PD</Box>
             <Typography sx={{ fontWeight: 700 }}>Profile Directory</Typography>
           </Stack>
-          <Typography component="h2" id="login-heading" variant="h1" sx={{ fontSize: 26, mb: 1 }}>Welcome back</Typography>
+          <Typography component="h1" id="login-heading" variant="h1" sx={{ fontSize: 26, mb: 1 }}>Welcome back</Typography>
           <Typography color="text.secondary" sx={{ mb: 4 }}>Sign in with your administrator account.</Typography>
           <Box component="form" noValidate onSubmit={handleSubmit(onSubmit, () => setSubmitted(true))}>
             <FormErrorSummary errors={errors} submitted={submitted} />

@@ -23,7 +23,8 @@ ETags, and an append-only audit trail.
 - JDK 21 (the project requires Java 21; Java 17 is not sufficient)
 - Node 22.13.1 and npm 10+ (`.nvmrc` declares the local Node version)
 - For backend integration tests, Docker must be running for Testcontainers
-- Optional PDF delivery tools: Pandoc, XeLaTeX, and Poppler (`pdftoppm`)
+- Optional PDF delivery tools: Poppler (`pdftoppm`) plus either native Pandoc
+  and XeLaTeX or the `pandoc/latex:latest` Docker image
 
 Check the core tools:
 
@@ -61,6 +62,7 @@ docker compose version
    and, by default, one local-only administrator:
 
    ```text
+   name:     Sardar Umair
    email:    admin@example.test
    password: ChangeMe123!
    ```
@@ -85,6 +87,11 @@ docker compose version
 
 The dev profile has safe local cookie settings. Production requires HTTPS and
 `APP_COOKIE_SECURE=true`.
+
+With `APP_SEED_DEMO_DATA=true`, the dev profile adds 60 fictional
+`@example.test` profiles (54 active and 6 archived) and 79 associated
+addresses. Seeding is additive and idempotent, so it creates missing fixtures
+without overwriting or removing local development records.
 
 ## Tests and quality checks
 
@@ -128,6 +135,25 @@ full-screen routes. Returning to the list retains its query and scroll context.
 Each user can have multiple ordered addresses with at most one active primary
 address. Deletes are soft deletes, and ETags prevent one administrator from
 silently overwriting another administrator’s recent change.
+
+## Interface previews
+
+These are live captures from the running application and the development
+fixture data. The full workflow gallery, including archive, restore, and form
+states, is included in the assessment report.
+
+<p align="center">
+  <img src="docs/submission/assets/screenshots/02-directory-active-light-desktop.png" alt="Light-mode desktop profile directory" width="900">
+</p>
+
+<p align="center">
+  <img src="docs/submission/assets/screenshots/14-profile-detail-dark-desktop.png" alt="Dark-mode desktop profile detail" width="900">
+</p>
+
+<p align="center">
+  <img src="docs/submission/assets/screenshots/17-directory-archived-light-tablet-1024.png" alt="Light-mode tablet archived profile cards" width="620">
+  <img src="docs/submission/assets/screenshots/21-profile-editor-dark-mobile.png" alt="Dark-mode mobile full-screen profile editor" width="280">
+</p>
 
 ## Security at a glance
 
@@ -174,25 +200,34 @@ Actuator private. See [infra deployment notes](infra/README.md).
 - [UI design](docs/UI-DESIGN.md)
 - [Submission source instructions](docs/submission/README.md)
 
-Render review screenshots from the static mockups:
+The static mockups remain a design reference. Generate the current live
+evidence gallery from the dev application with the isolated capture workflow:
 
 ```bash
-scripts/render-mockup-previews.sh
+CAPTURE_POSTGRES_PORT=5433 docker compose \
+  -p profile-directory-capture \
+  -f docker-compose.yml \
+  -f docker-compose.capture.yml \
+  up -d postgres
+
+cd frontend
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome \
+npm run capture:docs
 ```
 
-The helper launches headless Chrome with an isolated temporary profile and
-`--no-sandbox` only to render repository-owned static HTML. Do not repurpose it
-to browse untrusted pages.
+Start the backend against the isolated capture database before the last command.
+The self-contained assessment report contains the complete backend, proxy, and
+cleanup commands.
 
-Prepare the required submission filename, then render its PDF and page previews:
+Render the finalized submission source and page previews:
 
 ```bash
 scripts/render-submission-pdf.sh --check-tools
-scripts/render-submission-pdf.sh docs/submission/LastName_FirstName_AssessmentForFullStackDeveloper_2026-09-03.md
+scripts/render-submission-pdf.sh
 ```
 
 Generated PDFs and preview images go under `output/pdf/` and are ignored by
-Git. See the submission README before final delivery.
+Git.
 
 ## Troubleshooting
 

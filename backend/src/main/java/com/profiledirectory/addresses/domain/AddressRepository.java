@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AddressRepository extends JpaRepository<Address, UUID> {
+    boolean existsByUserProfileIdAndLabel(UUID userProfileId, String label);
+
     List<Address> findByUserProfileIdAndDeletedAtIsNullOrderByDisplayOrderAscCreatedAtAsc(UUID userProfileId);
 
     @Query("""

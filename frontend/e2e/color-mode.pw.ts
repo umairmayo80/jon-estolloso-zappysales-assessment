@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function mockDirectory(page: Page) {
-  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Local Administrator', role: 'ADMIN' } }));
+  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Sardar Umair', role: 'ADMIN' } }));
   await page.route('**/api/v1/users**', (route) => route.fulfill({ json: {
     content: [{ id: 'maya-1', firstName: 'Maya', lastName: 'Chen', email: 'maya.chen@example.test', addressCount: 2, deleted: false, version: 0, updatedAt: '2026-09-03T13:15:00Z' }],
     page: 0,

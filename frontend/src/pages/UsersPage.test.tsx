@@ -45,13 +45,14 @@ describe('UsersPage', () => {
   });
   afterEach(() => vi.restoreAllMocks());
 
-  it('uses the URL state for its API request and renders readable mobile person cards', async () => {
+  it('uses the URL state for its API request and renders readable mobile person cards with email', async () => {
     renderDirectory();
 
     await screen.findByText('Marisa Watson');
     expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ query: 'Marisa', status: 'active', sort: 'firstName,asc', page: 2, size: 20 }));
     expect(screen.getByLabelText('Profile cards')).toBeVisible();
     expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    expect(screen.getByText('marisa@example.test')).toBeVisible();
     expect(screen.getByText('2 addresses')).toBeVisible();
   });
 

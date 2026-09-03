@@ -1,5 +1,5 @@
 import { type ReactNode, lazy, Suspense } from 'react';
-import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Link as RouterLink, Navigate, Outlet, Route, RouterProvider, useLocation } from 'react-router-dom';
 import { Box, Button, Typography } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { useAuth } from './auth/AuthProvider';
@@ -25,27 +25,33 @@ function ProtectedRoute() {
 }
 
 function NotFoundPage() {
-  return <Box sx={{ maxWidth: 520, mx: 'auto', pt: { xs: 7, md: 12 }, textAlign: 'center' }}><Typography component="h1" variant="h1">This page is not available</Typography><Typography color="text.secondary" sx={{ mt: 1 }}>The address may be incorrect, or the page may have moved.</Typography><Button href="/users" startIcon={<ArrowBackRoundedIcon />} sx={{ mt: 3 }}>Return to directory</Button></Box>;
+  return <Box sx={{ maxWidth: 520, mx: 'auto', pt: { xs: 7, md: 12 }, textAlign: 'center' }}><Typography component="h1" variant="h1" data-route-heading="true" tabIndex={-1}>This page is not available</Typography><Typography color="text.secondary" sx={{ mt: 1 }}>The address may be incorrect, or the page may have moved.</Typography><Button component={RouterLink} to="/users" startIcon={<ArrowBackRoundedIcon />} sx={{ mt: 3 }}>Return to directory</Button></Box>;
 }
 
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route element={<ProtectedRoute />}>
-        <Route element={<AppShell />}>
-          <Route index element={<Navigate to="/users" replace />} />
-          <Route path="users" element={<DeferredPage><UsersPage /></DeferredPage>} />
-          <Route path="users/new" element={<DeferredPage><UserEditorPage /></DeferredPage>} />
-          <Route path="users/:userId" element={<DeferredPage><UserDetailPage /></DeferredPage>}>
-            <Route path="edit" element={<DeferredPage><UserEditorPage /></DeferredPage>} />
-            <Route path="addresses/new" element={<DeferredPage><AddressEditorPage /></DeferredPage>} />
-            <Route path="addresses/:addressId/edit" element={<DeferredPage><AddressEditorPage /></DeferredPage>} />
-          </Route>
-          <Route path="*" element={<NotFoundPage />} />
+const routes = createRoutesFromElements(
+  <Route>
+    <Route path="/login" element={<LoginPage />} />
+    <Route element={<ProtectedRoute />}>
+      <Route element={<AppShell />}>
+        <Route index element={<Navigate to="/users" replace />} />
+        <Route path="users" element={<DeferredPage><UsersPage /></DeferredPage>} />
+        <Route path="users/new" element={<DeferredPage><UserEditorPage /></DeferredPage>} />
+        <Route path="users/:userId" element={<DeferredPage><UserDetailPage /></DeferredPage>}>
+          <Route path="edit" element={<DeferredPage><UserEditorPage /></DeferredPage>} />
+          <Route path="addresses/new" element={<DeferredPage><AddressEditorPage /></DeferredPage>} />
+          <Route path="addresses/:addressId/edit" element={<DeferredPage><AddressEditorPage /></DeferredPage>} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/users" replace />} />
-    </Routes>
-  );
+    </Route>
+    <Route path="*" element={<Navigate to="/users" replace />} />
+  </Route>,
+);
+
+// Data-router mode is required for useBlocker to intercept browser Back/Forward
+// navigation from dirty route-backed editor overlays.
+export const appRouter = createBrowserRouter(routes);
+
+export default function App() {
+  return <RouterProvider router={appRouter} />;
 }

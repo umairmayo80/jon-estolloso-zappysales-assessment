@@ -15,7 +15,8 @@
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "capture:docs": "node scripts/capture-submission-screenshots.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -51,7 +51,6 @@ export function AddressEditorPage() {
   const { showToast } = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string>();
-  const [confirmLeave, setConfirmLeave] = useState(false);
   const [hasConflict, setHasConflict] = useState(false);
   const userQuery = useQuery({ queryKey: ['user', userId], queryFn: () => usersApi.get(userId), enabled: Boolean(userId) });
   const addressQuery = useQuery({ queryKey: ['address', userId, addressId], queryFn: () => usersApi.getAddress(userId, addressId!), enabled: isEditing && Boolean(userId) });
@@ -63,7 +62,7 @@ export function AddressEditorPage() {
     defaultValues: { label: '', line1: '', line2: '', city: '', region: '', postalCode: '', countryCode: 'US', primary: false, displayOrder: 0 },
     mode: 'onBlur',
   });
-  useUnsavedChanges(isDirty);
+  const unsavedChanges = useUnsavedChanges(isDirty);
 
   useEffect(() => {
     // Preserve a draft while stale data is fetched after a concurrency conflict.
@@ -79,12 +78,13 @@ export function AddressEditorPage() {
       if (!etag) throw new Error('This profile is missing its current version. Refresh and try again.');
       return usersApi.updateAddress(userId, addressId, input, etag);
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       void queryClient.invalidateQueries({ queryKey: ['user', userId] });
       void queryClient.invalidateQueries({ queryKey: ['address', userId, addressId] });
       void queryClient.invalidateQueries({ queryKey: ['users'] });
       showToast({ severity: 'success', message: isEditing ? 'Address changes saved.' : 'Address added.' });
-      navigate(`/users/${userId}`, { replace: true, state: navigationState });
+      reset(inputFromAddress(result.data));
+      unsavedChanges.navigateWithoutPrompt(() => navigate(`/users/${userId}`, { replace: true, state: navigationState }));
     },
     onError: (error) => {
       if (error instanceof ApiError && error.status === 412) {
@@ -104,7 +104,6 @@ export function AddressEditorPage() {
   });
 
   const close = () => navigate(`/users/${userId}`, { replace: true, state: navigationState });
-  const requestClose = () => isDirty ? setConfirmLeave(true) : close();
   const useLatestValues = () => {
     if (address) reset(inputFromAddress(address));
     setHasConflict(false);
@@ -122,7 +121,7 @@ export function AddressEditorPage() {
 
   return (
     <>
-      <EditorPanel title={isEditing ? 'Edit address' : 'Add address'} subtitle={isEditing ? `Update the ${address?.label ?? ''} address.` : `Add an address for ${userQuery.data.data.firstName} ${userQuery.data.data.lastName}.`} onClose={requestClose}>
+      <EditorPanel title={isEditing ? 'Edit address' : 'Add address'} subtitle={isEditing ? `Update the ${address?.label ?? ''} address.` : `Add an address for ${userQuery.data.data.firstName} ${userQuery.data.data.lastName}.`} onClose={close}>
         <Box component="form" noValidate onSubmit={handleSubmit(onSubmit, () => setSubmitted(true))} sx={{ p: { xs: 2, sm: 3 }, pb: 4 }}>
           <FormErrorSummary errors={errors} submitted={submitted} />
           {hasConflict && <Alert severity="warning" sx={{ mb: 2.5 }} action={<Button color="inherit" size="small" onClick={useLatestValues} disabled={userQuery.isFetching || addressQuery.isFetching}>Use latest values</Button>}>This address changed elsewhere. Your unsaved edits are still in this form; the latest version is being used for the next save.</Alert>}
@@ -142,10 +141,10 @@ export function AddressEditorPage() {
               <Box sx={{ ml: 4.5, mt: -.25, color: 'text.secondary', fontSize: 12 }}>A person can have one active primary address. Selecting this updates the current primary address.</Box>
             </Box>
           </Stack>
-          <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={1.25} sx={{ justifyContent: 'flex-end', mt: 4 }}><Button onClick={requestClose} disabled={isSubmitting}>Cancel</Button><Button type="submit" variant="contained" disabled={isSubmitting || (hasConflict && (userQuery.isFetching || addressQuery.isFetching))} startIcon={isSubmitting ? <CircularProgress color="inherit" size={16} /> : <SaveRoundedIcon />}>{isSubmitting ? 'Saving…' : isEditing ? 'Save changes' : 'Add address'}</Button></Stack>
+          <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={1.25} sx={{ justifyContent: 'flex-end', mt: 4 }}><Button onClick={close} disabled={isSubmitting}>Cancel</Button><Button type="submit" variant="contained" disabled={isSubmitting || (hasConflict && (userQuery.isFetching || addressQuery.isFetching))} startIcon={isSubmitting ? <CircularProgress color="inherit" size={16} /> : <SaveRoundedIcon />}>{isSubmitting ? 'Saving…' : isEditing ? 'Save changes' : 'Add address'}</Button></Stack>
         </Box>
       </EditorPanel>
-      <ConfirmDialog open={confirmLeave} title="Discard unsaved changes?" description="Your edits have not been saved. If you leave now, they will be lost." confirmLabel="Discard changes" tone="error" onCancel={() => setConfirmLeave(false)} onConfirm={close} />
+      <ConfirmDialog open={unsavedChanges.isBlocked} title="Discard unsaved changes?" description="Your edits have not been saved. If you leave now, they will be lost." confirmLabel="Discard changes" tone="error" onCancel={unsavedChanges.keepEditing} onConfirm={unsavedChanges.discardChanges} />
     </>
   );
 }

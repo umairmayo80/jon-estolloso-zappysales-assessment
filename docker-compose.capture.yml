@@ -1,0 +1,19 @@
+name: profile-directory-capture
+
+services:
+  postgres:
+    restart: "no"
+    environment:
+      POSTGRES_DB: ${CAPTURE_POSTGRES_DB:-profile_directory}
+      POSTGRES_USER: ${CAPTURE_POSTGRES_USER:-profile_directory}
+      POSTGRES_PASSWORD: ${CAPTURE_POSTGRES_PASSWORD:-profile_directory}
+    # This file is an overlay for docker-compose.yml. Replace the base bindings
+    # rather than publishing both the development and capture database ports.
+    ports: !override
+      - "127.0.0.1:${CAPTURE_POSTGRES_PORT:-5433}:5432"
+    volumes: !override
+      - profile-directory-capture-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  profile-directory-capture-postgres-data:
+    name: profile-directory-capture-postgres-data

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { type RefObject, useEffect, useRef, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppBar, Avatar, Box, Button, Divider, Drawer, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
@@ -9,6 +9,58 @@ import { useAuth } from '../auth/AuthProvider';
 import { ColorModeMenu } from './ColorModeMenu';
 
 const railWidth = 240;
+
+function isEditorRoute(pathname: string): boolean {
+  return /^\/users\/new$/.test(pathname)
+    || /^\/users\/[^/]+\/edit$/.test(pathname)
+    || /^\/users\/[^/]+\/addresses\/(?:new|[^/]+\/edit)$/.test(pathname);
+}
+
+function RouteFocusManager({ mainRef }: { mainRef: RefObject<HTMLDivElement | null> }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isEditorRoute(location.pathname)) return;
+
+    const main = mainRef.current;
+    if (!main) return;
+
+    const userHasMovedFocusOutsideMain = () => {
+      const activeElement = document.activeElement;
+      return activeElement instanceof HTMLElement
+        && activeElement !== document.body
+        && activeElement !== document.documentElement
+        && activeElement !== main
+        && !main.contains(activeElement);
+    };
+    const focusRouteHeading = () => {
+      // Do not steal focus from a header control or another deliberate user
+      // interaction while a lazy route is still resolving.
+      if (userHasMovedFocusOutsideMain()) return true;
+      const heading = main.querySelector<HTMLElement>('[data-route-heading="true"], h1');
+      if (!heading) return false;
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+      return true;
+    };
+
+    const observer = new MutationObserver(() => {
+      if (focusRouteHeading()) observer.disconnect();
+    });
+    observer.observe(main, { childList: true, subtree: true });
+    const frame = window.requestAnimationFrame(() => {
+      if (focusRouteHeading()) observer.disconnect();
+      else main.focus({ preventScroll: true });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [location.pathname, mainRef]);
+
+  return null;
+}
 
 function DirectoryMark() {
   return <Box aria-hidden="true" sx={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: 1.5, bgcolor: 'primary.main', color: 'primary.contrastText', fontSize: 10, fontWeight: 800 }}>PD</Box>;
@@ -55,6 +107,7 @@ export function AppShell() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const mainRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = async () => {
     await logout();
@@ -96,9 +149,10 @@ export function AppShell() {
             </Stack>
           </Toolbar>
         </AppBar>
-        <Box component="main" id="main-content" tabIndex={-1} sx={{ outline: 'none', maxWidth: 1320, mx: 'auto', px: { xs: 1.5, sm: 3, lg: 4 }, py: { xs: 2.5, md: 4 } }}>
+        <Box component="main" id="main-content" ref={mainRef} tabIndex={-1} aria-label="Main content" sx={{ outline: 'none', maxWidth: 1320, mx: 'auto', px: { xs: 1.5, sm: 3, lg: 4 }, py: { xs: 2.5, md: 4 } }}>
           <Outlet />
         </Box>
+        <RouteFocusManager mainRef={mainRef} />
       </Box>
     </Box>
   );

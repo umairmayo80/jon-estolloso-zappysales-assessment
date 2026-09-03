@@ -90,8 +90,8 @@ export function UserDetailPage() {
         <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
           <Card sx={{ mb: 2.25 }}>
             <CardContent sx={{ p: { xs: 2, sm: 3 }, '&:last-child': { pb: { xs: 2, sm: 3 } } }}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between', alignItems: { sm: 'center' } }}>
-                <Stack direction="row" spacing={1.75} sx={{ alignItems: 'center' }}><InitialAvatar firstName={user.firstName} lastName={user.lastName} size={48} /><Box><Typography component="h1" variant="h1" sx={{ fontSize: 25 }}>{user.firstName} {user.lastName}</Typography><Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}><Typography variant="body2" color="text.secondary">{user.email}</Typography><StatusChip deleted={user.deleted} /></Stack></Box></Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between', alignItems: { sm: 'center' }, minWidth: 0 }}>
+                <Stack direction="row" spacing={1.75} sx={{ alignItems: 'center', minWidth: 0, flex: 1 }}><InitialAvatar firstName={user.firstName} lastName={user.lastName} size={48} /><Box sx={{ minWidth: 0, flex: 1 }}><Typography component="h1" variant="h1" data-route-heading="true" tabIndex={-1} sx={{ fontSize: 25, overflowWrap: 'anywhere' }}>{user.firstName} {user.lastName}</Typography><Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap', minWidth: 0 }}><Typography variant="body2" color="text.secondary" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{user.email}</Typography><Box sx={{ flex: '0 0 auto' }}><StatusChip deleted={user.deleted} /></Box></Stack></Box></Stack>
                 {user.deleted ? <Button variant="contained" startIcon={<RestoreRoundedIcon />} onClick={() => setPendingAction({ kind: 'restore-user' })}>Restore profile</Button> : <Button component={RouterLink} to={`/users/${user.id}/edit`} state={editState} variant="outlined" startIcon={<EditRoundedIcon />}>Edit profile</Button>}
               </Stack>
             </CardContent>

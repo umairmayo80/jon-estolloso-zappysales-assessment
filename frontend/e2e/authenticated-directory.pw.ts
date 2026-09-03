@@ -13,9 +13,22 @@ async function login(page: Page) {
   await expect(page).toHaveURL(/\/users/);
 }
 
-test('administrator can sign in and open the directory', async ({ page }) => {
+test('administrator can sign in and open the directory', async ({ page }, testInfo) => {
   await login(page);
   await expect(page.getByRole('heading', { name: 'People directory' })).toBeVisible();
+  if (testInfo.project.name === 'chromium') {
+    await expect(page.getByText('Sardar Umair', { exact: true })).toBeVisible();
+  }
+});
+
+test('invalid credentials are rejected', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Work email').fill('admin@example.test');
+  await page.getByRole('textbox', { name: 'Password', exact: true }).fill('NotTheLocalPassword123!');
+  await page.getByRole('button', { name: 'Sign in securely' }).click();
+
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('alert')).toBeVisible();
 });
 
 test('desktop directory sorting updates the server request and loads only table rows', async ({ page }, testInfo) => {
@@ -23,7 +36,7 @@ test('desktop directory sorting updates the server request and loads only table 
 
   const requestedSorts: string[] = [];
   let releaseEmailRequest: (() => void) | undefined;
-  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Local Administrator', role: 'ADMIN' } }));
+  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Sardar Umair', role: 'ADMIN' } }));
   await page.route('**/api/v1/users**', async (route) => {
     const requestUrl = new URL(route.request().url());
     const sort = requestUrl.searchParams.get('sort') ?? '';
@@ -70,7 +83,7 @@ test('desktop directory sorting updates the server request and loads only table 
 test('desktop person cells keep both text lines within their grid cell', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'The grid is replaced with person cards on mobile.');
 
-  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Local Administrator', role: 'ADMIN' } }));
+  await page.route('**/api/v1/auth/me', (route) => route.fulfill({ json: { id: 'admin-1', email: 'admin@example.test', displayName: 'Sardar Umair', role: 'ADMIN' } }));
   await page.route('**/api/v1/users**', (route) => route.fulfill({ json: {
     content: [{ id: 'maya-1', firstName: 'Maya', lastName: 'Chen', email: 'maya.chen@example.test', addressCount: 2, deleted: false, version: 0, updatedAt: '2026-09-03T13:15:00Z' }],
     page: 0,
@@ -163,7 +176,7 @@ test.describe('live profile lifecycle', () => {
     await page.getByRole('link', { name: 'Edit profile' }).click();
     const editor = page.getByRole('dialog', { name: 'Edit profile' });
     await expect(editor).toBeVisible();
-    await expect(editor).toHaveCSS('position', 'fixed');
+    await expect(editor).toHaveClass(/MuiDialog-paperFullScreen/);
     const box = await editor.boundingBox();
     const viewport = page.viewportSize();
     expect(box?.width).toBeGreaterThanOrEqual((viewport?.width ?? 0) - 1);

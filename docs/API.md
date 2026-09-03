@@ -23,7 +23,7 @@ Login request:
 ```json
 {
   "email": "admin@example.test",
-  "password": "correct horse battery staple"
+  "password": "ChangeMe123!"
 }
 ```
 
