@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+a { color: inherit; }
+
+.skip-link {
+  position: fixed;
+  z-index: 2000;
+  left: 16px;
+  top: -80px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  background: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus { top: 16px; }
+
+.Mui-focusVisible, :focus-visible {
+  outline: 2px solid #2563eb !important;
+  outline-offset: 2px;
+}
+
+.directory-grid .MuiDataGrid-columnHeaders {
+  border-bottom-color: #e4ecfc;
+  color: #475569;
+  background: #fbfdff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.directory-grid .MuiDataGrid-cell { border-bottom-color: #edf2f8; }
+.directory-grid .MuiDataGrid-row { cursor: pointer; }
+.directory-grid .MuiDataGrid-row:hover { background-color: #f8fbff; }
+.directory-grid .MuiDataGrid-row.is-selected-row { background: #f3f7ff; box-shadow: inset 3px 0 #2563eb; }
+.directory-grid .MuiDataGrid-row.is-selected-row:hover { background: #eff6ff; }
+.directory-grid .MuiDataGrid-cell:focus, .directory-grid .MuiDataGrid-cell:focus-within { outline: none; }
+
+@media (max-width: 899px) {
+  .directory-grid { display: none; }
+}
