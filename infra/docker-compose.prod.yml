@@ -1,0 +1,85 @@
+# Example same-origin production topology.
+# Start from this file only after providing production secrets by your platform's
+# secret manager. Do not use .env.example values in a real deployment.
+name: profile-directory
+
+services:
+  postgres:
+    image: postgres:17.6
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?required}
+      POSTGRES_USER: ${POSTGRES_USER:?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+
+  backend:
+    build:
+      context: ../backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?required}
+      DATABASE_USERNAME: ${POSTGRES_USER:?required}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?required}
+      APP_COOKIE_SECURE: "true"
+      APP_JWT_ISSUER: ${APP_JWT_ISSUER:?required}
+      APP_JWT_PRIVATE_KEY_PATH: file:/run/secrets/jwt-private-key
+      APP_JWT_PUBLIC_KEY_PATH: file:/run/secrets/jwt-public-key
+      APP_JWT_REQUIRE_KEY_MATERIAL: "true"
+      APP_REFRESH_TOKEN_PEPPER: ${APP_REFRESH_TOKEN_PEPPER:?required}
+      APP_BOOTSTRAP_ENABLED: ${APP_BOOTSTRAP_ENABLED:-false}
+      APP_BOOTSTRAP_ADMIN_EMAIL: ${APP_BOOTSTRAP_ADMIN_EMAIL:-}
+      APP_BOOTSTRAP_ADMIN_PASSWORD: ${APP_BOOTSTRAP_ADMIN_PASSWORD:-}
+      APP_BOOTSTRAP_ADMIN_DISPLAY_NAME: ${APP_BOOTSTRAP_ADMIN_DISPLAY_NAME:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8080"
+      - "8081"
+    read_only: true
+    tmpfs:
+      - /tmp
+    secrets:
+      - source: jwt-private-key
+        target: jwt-private-key
+      - source: jwt-public-key
+        target: jwt-public-key
+    security_opt:
+      - no-new-privileges:true
+
+  frontend:
+    build:
+      context: ../frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./nginx/profile-directory.conf:/etc/nginx/conf.d/default.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  postgres-data:
+    name: profile-directory-postgres-data
+
+secrets:
+  jwt-private-key:
+    file: ${APP_JWT_PRIVATE_KEY_FILE:?Set the path to the private key file}
+  jwt-public-key:
+    file: ${APP_JWT_PUBLIC_KEY_FILE:?Set the path to the public key file}
