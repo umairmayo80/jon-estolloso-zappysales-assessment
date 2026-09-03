@@ -47,3 +47,5 @@ docs/generated/
 # Local service data
 .docker/
 postgres-data/
+.agents
+.codex
